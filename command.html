@@ -335,8 +335,8 @@ tbody td{padding:13px 16px;font-size:13px;vertical-align:middle;}
       <div class="stats-row">
         <div class="stat-card"><div class="stat-card-label">Total Users</div><div class="stat-card-val green" id="d-total-users">—</div></div>
         <div class="stat-card"><div class="stat-card-label">Total Invested</div><div class="stat-card-val gold" id="d-total-invested">—</div></div>
-        <div class="stat-card"><div class="stat-card-label">Total Balance</div><div class="stat-card-val emerald" id="d-total-balance">—</div></div>
-        <div class="stat-card"><div class="stat-card-label">Total Balance</div><div class="stat-card-val blue" id="d-total-balance">—</div></div>
+        <div class="stat-card"><div class="stat-card-label">Total Funds</div><div class="stat-card-val emerald" id="d-total-balance">—</div></div>
+        <div class="stat-card"><div class="stat-card-label">Total Withdrawn</div><div class="stat-card-val blue" id="d-total-withdrawn">—</div></div>
       </div>
       <div class="pct-summary" id="pct-summary"></div>
       <div class="stats-row" style="grid-template-columns:repeat(3,1fr)">
@@ -533,7 +533,7 @@ tbody td{padding:13px 16px;font-size:13px;vertical-align:middle;}
   </div>
 </div>
 
-<div class="modal-ov" id="edit-modal"><div class="modal-box"><div class="modal-title">✏️ Edit User</div><input type="hidden" id="edit-username"><div class="modal-row"><label class="modal-label">Password</label><input type="text" class="modal-input" id="edit-password"></div><div class="modal-row"><label class="modal-label">Phone Number</label><input type="text" class="modal-input" id="edit-phone-modal" placeholder="+256..."></div><div class="modal-row"><label class="modal-label">Funds (UGX)</label><input type="number" class="modal-input" id="edit-balance" min="0"></div><div class="modal-row"><label class="modal-label">Committed (UGX)</label><input type="number" class="modal-input" id="edit-invested" min="0"></div><div class="modal-actions"><button class="modal-cancel" onclick="closeEditModal()">Cancel</button><button class="btn btn-save" onclick="saveEditUser()">Save Changes</button></div></div></div>
+<div class="modal-ov" id="edit-modal"><div class="modal-box"><div class="modal-title">✏️ Edit User</div><input type="hidden" id="edit-username"><div class="modal-row"><label class="modal-label">Password</label><input type="text" class="modal-input" id="edit-password"></div><div class="modal-row"><label class="modal-label">Phone Number</label><input type="text" class="modal-input" id="edit-phone-modal" placeholder="+256..."></div><div class="modal-row"><label class="modal-label">Funds (UGX)</label><input type="number" class="modal-input" id="edit-balance" min="0"></div><div class="modal-row"><label class="modal-label">Committed (UGX)</label><input type="number" class="modal-input" id="edit-invested" min="0"></div><div class="modal-row"><label class="modal-label">Total Withdrawn (UGX)</label><input type="text" class="modal-input" id="edit-total-withdrawn" disabled style="background:var(--surface3);cursor:not-allowed;"></div><div class="modal-row"><label class="modal-label">Total Income (UGX)</label><input type="text" class="modal-input" id="edit-total-income" disabled style="background:var(--surface3);cursor:not-allowed;"></div><div class="modal-actions"><button class="modal-cancel" onclick="closeEditModal()">Cancel</button><button class="btn btn-save" onclick="saveEditUser()">Save Changes</button></div></div></div>
 <div class="modal-ov" id="edit-phone-modal"><div class="modal-box"><div class="modal-title">📱 Edit Phone Number</div><input type="hidden" id="edit-phone-username"><div class="modal-row"><label class="modal-label">Username</label><input type="text" class="modal-input" id="edit-phone-user-display" disabled></div><div class="modal-row"><label class="modal-label">Phone Number (with prefix)</label><input type="text" class="modal-input" id="edit-phone-value" placeholder="+256712345678"></div><div class="modal-actions"><button class="modal-cancel" onclick="closeEditPhoneModal()">Cancel</button><button class="btn btn-save" onclick="saveEditPhone()">Save Phone</button></div></div></div>
 
 <div class="toast" id="toast"></div>
@@ -756,16 +756,18 @@ function confirmAction(title, text){ return Swal.fire({title, text, icon:'warnin
 
 function renderDashboard(){
   const users=Object.values(allUsers);
-  let invested=0,balance=0,locked=0,pendingDep=0;
+  let invested=0,balance=0,withdrawn=0,locked=0,pendingDep=0;
   users.forEach(u=>{ 
-    invested+=u.stake||0;  // Changed from u.invested to u.stake
-    balance+=u.balance||0; 
+    invested+=u.investment||0;
+    balance+=u.balance||0;
+    withdrawn+=u.totalWithdrawn||0;
     if(u.locked)locked++; 
     if(u.transactions){ Object.values(u.transactions).forEach(tx=>{ if(tx.type==='Deposit'&&tx.status==='pending')pendingDep++; }); } 
   });
   document.getElementById('d-total-users').textContent=users.length;
   document.getElementById('d-total-invested').textContent=fmt(invested);
   document.getElementById('d-total-balance').textContent=fmt(balance);
+  document.getElementById('d-total-withdrawn').textContent=fmt(withdrawn);
   document.getElementById('d-locked').textContent=locked;
   document.getElementById('d-min-deposit').textContent=fmt(allSettings.minDeposit||10000);
   document.getElementById('d-pending-dep').textContent=pendingDep;
@@ -779,13 +781,13 @@ function renderUsersTable(){
   const filtered=searchFilter?users.filter(u=>u.username&&u.username.toLowerCase().includes(searchFilter.toLowerCase())):users;
   const tbody=document.getElementById('users-table-body');
   if(!filtered.length){ tbody.innerHTML='<tr class="empty-row"><td colspan="9">No users found<\/tr>'; return; }
-  tbody.innerHTML=filtered.map(u=>{ const sk=safeKey(u.username||''); const availColor=(u.balance||0)>0?'var(--accent3)':'var(--warn)'; return '<tr><td><strong>'+ (u.username||'—') +'</strong></td><td class="mono">'+ (u.phone||'—') +'</strong></td><td><div class="pw-cell" id="pwcell_'+sk+'"><span class="pw-val" onclick="editPw(\''+sk+'\')">'+ (u.password||'—') +'</span></div></td><td class="mono" style="color:var(--gold)">'+fmt(u.stake||0)+'</td><td class="mono" style="color:'+availColor+';font-weight:700">'+fmt(u.balance)+'</td><td class="mono">'+ (u.referrals?Object.keys(u.referrals).length:0) +'</td><td><span class="badge '+(u.locked?'badge-locked':'badge-active')+'">'+(u.locked?'Locked':'Active')+'</span></td><td style="display:flex;gap:6px;flex-wrap:wrap;"><button class="btn btn-edit" onclick="openEditModal(\''+u.username+'\')">✏️ Edit</button><button class="btn btn-edit" onclick="openEditPhoneModal(\''+u.username+'\')">📱 Phone</button><button class="btn '+(u.locked?'btn-approve':'btn-reject')+'" onclick="toggleLock(\''+u.username+'\','+(!u.locked)+')">'+(u.locked?'🔓 Unlock':'🔒 Lock')+'</button><button class="btn btn-delete" onclick="deleteUser(\''+u.username+'\')">🗑️</button></td></tr>'; }).join('');
+  tbody.innerHTML=filtered.map(u=>{ const sk=safeKey(u.username||''); const availColor=(u.balance||0)>0?'var(--accent3)':'var(--warn)'; const withdrawnColor=(u.totalWithdrawn||0)>0?'var(--warn)':'var(--muted)'; return '<tr><td><strong>'+ (u.username||'—') +'</strong></td><td class="mono">'+ (u.phone||'—') +'</td><td><div class="pw-cell" id="pwcell_'+sk+'"><span class="pw-val" onclick="editPw(\''+sk+'\')">'+ (u.password||'—') +'</span></div></td><td class="mono" style="color:var(--gold)">'+fmt(u.investment||0)+'</td><td class="mono" style="color:'+withdrawnColor+';font-weight:700">'+fmt(u.totalWithdrawn||0)+'</td><td class="mono" style="color:'+availColor+';font-weight:700">'+fmt(u.balance||0)+'</td><td class="mono">'+ (u.referrals?Object.keys(u.referrals).length:0) +'</td><td><span class="badge '+(u.locked?'badge-locked':'badge-active')+'">'+(u.locked?'Locked':'Active')+'</span></td><td style="display:flex;gap:6px;flex-wrap:wrap;"><button class="btn btn-edit" onclick="openEditModal(\''+u.username+'\')">✏️ Edit</button><button class="btn btn-edit" onclick="openEditPhoneModal(\''+u.username+'\')">📱 Phone</button><button class="btn '+(u.locked?'btn-approve':'btn-reject')+'" onclick="toggleLock(\''+u.username+'\','+(!u.locked)+')">'+(u.locked?'🔓 Unlock':'🔒 Lock')+'</button><button class="btn btn-delete" onclick="deleteUser(\''+u.username+'\')">🗑️</button></td></tr>'; }).join('');
 }
 
 function editPw(sk){ const cell=document.getElementById('pwcell_'+sk); if(!cell) return; const cur=cell.querySelector('.pw-val'); const currentPw=cur?cur.textContent:''; cell.innerHTML='<input class="pw-edit-input" id="pwinput_'+sk+'" value="'+currentPw+'" type="text"><button class="pw-save-btn" onclick="savePw(\''+sk+'\')">✓</button>'; const inp=document.getElementById('pwinput_'+sk); if(inp){inp.focus();inp.onkeydown=e=>{if(e.key==='Enter')savePw(sk);if(e.key==='Escape')renderUsersTable();};} }
 function savePw(sk){ const inp=document.getElementById('pwinput_'+sk); if(!inp) return; const newPw=inp.value.trim(); if(!newPw){toast('Password cannot be empty','#f87171');return;} const u=Object.values(allUsers).find(u=>safeKey(u.username||'')==sk); if(!u) return; db.ref('users/'+sk+'/password').set(newPw); toast('✅ Password updated for '+u.username); }
 
-function openEditModal(username){ const u=allUsers[safeKey(username)]; if(!u) return; document.getElementById('edit-username').value=username; document.getElementById('edit-password').value=u.password||''; document.getElementById('edit-phone-modal').value=u.phone||''; document.getElementById('edit-balance').value=u.balance||0; document.getElementById('edit-invested').value=u.investment||0; document.getElementById('edit-modal').classList.add('open'); }
+function openEditModal(username){ const u=allUsers[safeKey(username)]; if(!u) return; document.getElementById('edit-username').value=username; document.getElementById('edit-password').value=u.password||''; document.getElementById('edit-phone-modal').value=u.phone||''; document.getElementById('edit-balance').value=u.balance||0; document.getElementById('edit-invested').value=u.investment||0; document.getElementById('edit-total-withdrawn').value=fmt(u.totalWithdrawn||0); document.getElementById('edit-total-income').value=fmt(u.totalIncome||0); document.getElementById('edit-modal').classList.add('open'); }
 function closeEditModal(){ document.getElementById('edit-modal').classList.remove('open'); }
 async function saveEditUser(){
   const username=document.getElementById('edit-username').value;
