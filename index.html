@@ -8,12 +8,14 @@
 <meta property="og:title" content="ELITETRADE — Grow Your Wealth">
 <meta property="og:description" content="Uganda's Premium Investment Wallet. Earn 10% daily returns. Join thousands of investors growing their money today!">
 <meta property="og:site_name" content="ELITETRADE">
-<meta property="og:image" content="https://raw.githubusercontent.com/dhpmt/ELITETRADE/main/logo.png">
+<meta property="og:image" content="https://tuvko.github.io/ELITE-TRADE/logo.png">
 <meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
+<meta property="og:image:height" content="1200">
+<meta property="og:url" content="https://tuvko.github.io/ELITE-TRADE/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="ELITETRADE — Grow Your Wealth">
 <meta name="twitter:description" content="Uganda's Premium Investment Wallet. Earn 10% daily returns for 72 days!">
+<meta name="twitter:image" content="https://tuvko.github.io/ELITE-TRADE/logo.png">
 <meta name="description" content="Uganda's Premium Investment Wallet. Earn 10% daily returns. Join thousands of investors today!">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <!-- Firebase SDK -->
@@ -199,27 +201,6 @@ input[type="password"]{padding-right:46px;}
 .btn-reinvest{background:var(--accent);color:#fff;}
 .btn-transactions{background:var(--accent2);color:#fff;}
 
-/* Floating WhatsApp Icon */
-.whatsapp-float{
-  position:fixed;
-  bottom:80px;
-  right:20px;
-  width:55px;
-  height:55px;
-  background:#25D366;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:28px;
-  cursor:pointer;
-  box-shadow:0 4px 20px rgba(37,211,102,.4);
-  z-index:300;
-  transition:transform .2s;
-  color:#fff;
-  text-decoration:none;
-}
-.whatsapp-float:hover{transform:scale(1.08);}
 
 /* Table (Scrollable) - CORRECTED CALCULATIONS */
 .plan-wrap{background:var(--surface);border:2px solid var(--accent);border-radius:16px;overflow:hidden;}
@@ -546,12 +527,11 @@ input[type="password"]{padding-right:46px;}
       </div>
     </div>
     <div class="section">
-      <button class="wa-btn" onclick="openWaGroup()">?? Join Our WhatsApp Community</button>
+      <button class="wa-btn" onclick="openWaGroup()">?? Whatsapp Channel</button>
     </div>
   </div>
 
-  <!-- Floating WhatsApp Icon -->
-  <a href="#" id="whatsapp-float-btn" class="whatsapp-float" target="_blank">💬</a>
+  <!-- Floating WhatsApp Icon - REMOVED -->
 
   <!-- TNS (History) -->
   <div class="dash-section" id="sec-history">
@@ -960,15 +940,6 @@ function updateAvatarInUI(username){
   }
 }
 
-// Update WhatsApp floating button
-function updateWhatsAppButton(){
-  const waBtn = document.getElementById('whatsapp-float-btn');
-  if(waBtn && currentUser){
-    const phone = settingsData.waNumber || '700000000';
-    const message = `Hey, I'm ${currentUser.username}, I need assistance with my ELITETRADE investment account. Please help me! 🌱`;
-    waBtn.href = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-  }
-}
 
 // UI Helpers
 function showAuth(id){
@@ -985,7 +956,6 @@ function showDashboard(){
   document.querySelectorAll('.auth-page').forEach(p=>{p.classList.remove('active');p.style.display='none';});
   document.getElementById('dashboard-page').style.display='block';
   document.getElementById('dashboard-page').classList.add('active');
-  updateWhatsAppButton();
 }
 function hideLoading(){ document.getElementById('loading-screen').style.display='none'; }
 function switchTab(tab){
@@ -1229,7 +1199,6 @@ function startUserListener(username){
     renderHistory();
     renderTeam();
     applyWithdrawLock();
-    updateWhatsAppButton();
     // Check for any pending deposits on user load
     checkPendingDeposits();
   });
@@ -1248,7 +1217,6 @@ function startSettingsListener(){
     if(currentUser){ renderTeam(); }
     applyWithdrawLock();
     updateDepMinNote();
-    updateWhatsAppButton();
   });
 }
 
@@ -1504,7 +1472,6 @@ function loadDashboard(){
   hideLoading();
   updateBalanceUI(); renderHistory(); renderTeam();
   updateDepMinNote();
-  updateWhatsAppButton();
 }
 
 function getDateKey(d){ return d.toISOString().slice(0,10); }
