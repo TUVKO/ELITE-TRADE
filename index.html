@@ -38,6 +38,26 @@
   --avatar-bg:#0E7490;
   --ref-bg:#0D9EAA;
 }
+
+/* Light Theme */
+html.light-theme {
+  --bg:#F5F7FA;
+  --surface:#FFFFFF;
+  --surface2:#F0F2F5;
+  --surface3:#E8EAED;
+  --border:#D5DDE5;
+  --accent:#0084FF;
+  --accent2:#0063CC;
+  --accent3:#0084FF;
+  --warn:#E74C3C;
+  --gold:#F39C12;
+  --text:#1A1A1A;
+  --muted:#6C757D;
+  --table-header:#E3F2FD;
+  --table-border:#BBDEFB;
+  --avatar-bg:#0084FF;
+  --ref-bg:#00BCD4;
+}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:500px;margin:0 auto;position:relative;overflow-x:hidden;}
 
@@ -107,6 +127,8 @@ input[type="password"]{padding-right:46px;}
 .brand-icon{width:34px;height:34px;background:var(--accent);border-radius:10px;display:grid;place-items:center;font-size:16px;color:#fff;}
 .brand-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:var(--accent);}
 .topbar-right{display:flex;align-items:center;gap:10px;}
+.theme-toggle{width:38px;height:38px;border-radius:11px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:all .3s;}
+.theme-toggle:hover{border-color:var(--accent);background:var(--surface2);}
 .username-top{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:6px 12px;font-size:11px;font-weight:700;color:var(--accent3);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;opacity:0;pointer-events:none;transition:opacity .3s;}
 .menu-overlay.open{opacity:1;pointer-events:all;}
@@ -488,6 +510,7 @@ input[type="password"]{padding-right:46px;}
       <div class="brand"><img src="https://elitetrade.site/logo.png" alt="ELITETRADE" style="width:32px;height:32px;border-radius:8px;"><div class="brand-name">ELITETRADE</div></div>
     </div>
     <div class="topbar-right">
+      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">🌙</button>
       <div id="topbar-avatar" class="avatar avatar-sm"></div>
       <div class="username-top" id="dash-username">—</div>
     </div>
@@ -519,7 +542,7 @@ input[type="password"]{padding-right:46px;}
         <button class="action-btn" style="background:#22c55e;border:none;color:white;padding:16px;border-radius:12px;font-weight:600;font-size:16px;" onclick="switchTab('deposit')"><span class="btn-icon">💳</span>Credit</button>
         <button class="action-btn" style="background:#a855f7;border:none;color:white;padding:16px;border-radius:12px;font-weight:600;font-size:16px;" onclick="switchTab('reinvest')"><span class="btn-icon">🔄</span>Re-Invest</button>
         <button class="action-btn" style="background:#ef4444;border:none;color:white;padding:16px;border-radius:12px;font-weight:600;font-size:16px;" onclick="switchTab('withdraw')"><span class="btn-icon">💸</span>Withdraw</button>
-        <button class="action-btn" style="background:#0ea5e9;border:none;color:white;padding:16px;border-radius:12px;font-weight:600;font-size:16px;" onclick="switchTab('history')"><span class="btn-icon">📋</span>Transactions</button>
+        <button class="action-btn" style="background:#0ea5e9;border:none;color:white;padding:16px;border-radius:12px;font-weight:600;font-size:16px;" onclick="switchTab('team')"><span class="btn-icon">👥</span>Team</button>
       </div>
     </div>
     <div class="section">
@@ -2141,6 +2164,41 @@ document.addEventListener('keydown',e=>{
     else if(rp&&rp.classList.contains('active')) doRegister();
   }
 });
+
+// ============================================================
+// THEME TOGGLE
+// ============================================================
+function toggleTheme(){
+  const html = document.documentElement;
+  const themeToggle = document.getElementById('theme-toggle');
+  
+  if(html.classList.contains('light-theme')){
+    html.classList.remove('light-theme');
+    localStorage.setItem('elitetrade-theme', 'dark');
+    themeToggle.textContent = '🌙';
+  } else {
+    html.classList.add('light-theme');
+    localStorage.setItem('elitetrade-theme', 'light');
+    themeToggle.textContent = '☀️';
+  }
+}
+
+function initTheme(){
+  const savedTheme = localStorage.getItem('elitetrade-theme') || 'dark';
+  const html = document.documentElement;
+  const themeToggle = document.getElementById('theme-toggle');
+  
+  if(savedTheme === 'light'){
+    html.classList.add('light-theme');
+    themeToggle.textContent = '☀️';
+  } else {
+    html.classList.remove('light-theme');
+    themeToggle.textContent = '🌙';
+  }
+}
+
+// Initialize theme on page load
+document.addEventListener('DOMContentLoaded', initTheme);
 
 initApp();
 </script>

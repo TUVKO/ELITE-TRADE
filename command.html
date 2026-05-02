@@ -27,6 +27,24 @@
   --table-header:#0E5A7A;
   --ref-bg:#0D9EAA;
 }
+
+/* Light Theme */
+html.light-theme {
+  --bg:#F5F7FA;
+  --surface:#FFFFFF;
+  --surface2:#F0F2F5;
+  --surface3:#E8EAED;
+  --border:#D5DDE5;
+  --accent:#0084FF;
+  --accent2:#0063CC;
+  --accent3:#0084FF;
+  --warn:#E74C3C;
+  --gold:#F39C12;
+  --text:#1A1A1A;
+  --muted:#6C757D;
+  --table-header:#E3F2FD;
+  --ref-bg:#00BCD4;
+}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 .auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--bg);}
@@ -68,6 +86,8 @@ input[type="password"]{padding-right:46px;}
 .sidebar-footer{padding:16px 12px;border-top:1px solid var(--border);}
 .logout-btn{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:11px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;color:var(--warn);cursor:pointer;}
 .logout-btn:active{transform:scale(.98);}
+.theme-toggle{width:40px;height:40px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:all .3s;margin-bottom:12px;}
+.theme-toggle:hover{border-color:var(--accent);background:var(--surface3);}
 .main-content{margin-left:240px;flex:1;padding:28px;min-height:100vh;}
 .page{display:none;}
 .page.active{display:block;}
@@ -304,6 +324,7 @@ tbody td{padding:13px 16px;font-size:13px;vertical-align:middle;}
       <div class="nav-item" onclick="showPage('pg-settings')"><span class="nav-icon">⚙️</span><span>Settings</span></div>
     </div>
     <div class="sidebar-footer">
+      <button class="theme-toggle" id="theme-toggle-admin" onclick="toggleTheme()">🌙</button>
       <button class="logout-btn" onclick="adminLogout()">🚪 Logout</button>
     </div>
   </div>
@@ -942,6 +963,41 @@ function isValidEmail(email){
   const emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
+
+// ============================================================
+// THEME TOGGLE
+// ============================================================
+function toggleTheme(){
+  const html = document.documentElement;
+  const themeToggle = document.getElementById('theme-toggle-admin');
+  
+  if(html.classList.contains('light-theme')){
+    html.classList.remove('light-theme');
+    localStorage.setItem('elitetrade-admin-theme', 'dark');
+    themeToggle.textContent = '🌙';
+  } else {
+    html.classList.add('light-theme');
+    localStorage.setItem('elitetrade-admin-theme', 'light');
+    themeToggle.textContent = '☀️';
+  }
+}
+
+function initThemeAdmin(){
+  const savedTheme = localStorage.getItem('elitetrade-admin-theme') || 'dark';
+  const html = document.documentElement;
+  const themeToggle = document.getElementById('theme-toggle-admin');
+  
+  if(savedTheme === 'light'){
+    html.classList.add('light-theme');
+    themeToggle.textContent = '☀️';
+  } else {
+    html.classList.remove('light-theme');
+    themeToggle.textContent = '🌙';
+  }
+}
+
+// Initialize theme on page load
+document.addEventListener('DOMContentLoaded', initThemeAdmin);
 
 document.getElementById('loading-screen').style.display='none';
 checkAdminSession();
