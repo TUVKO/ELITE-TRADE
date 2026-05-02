@@ -236,34 +236,22 @@ input[type="password"]{padding-right:46px;}
 .profile-detail-val{font-weight:700;font-family:'JetBrains Mono',monospace;font-size:12px;}
 .profile-avatar-container{display:flex;justify-content:center;margin-bottom:14px;}
 
-/* New Profile Redesign Styles - TIMELINE */
-.profile-header-section{background:transparent;border-radius:0;padding:0;text-align:center;margin-bottom:0;color:var(--text);}
-.profile-avatar-lg{width:100px;height:100px;background:linear-gradient(135deg,#1e3a8a,#0369a1);border:4px solid rgba(0,217,255,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:44px;margin:0 auto 16px;font-weight:700;box-shadow:0 0 30px rgba(0,217,255,0.2);}
-.profile-name-header{font-family:'DM Sans',sans-serif;font-size:24px;font-weight:700;margin-bottom:8px;color:var(--text);}
-.profile-country-header{font-size:12px;opacity:1;display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:12px;color:var(--muted);}
-.profile-status-badge{display:inline-block;background:rgba(255,152,0,0.15);border:none;color:#ff9800;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:600;text-transform:none;letter-spacing:0;}
-
-/* Timeline Timeline Styles */
-.profile-info-section{background:transparent;border:none;border-radius:0;margin-bottom:0;overflow:visible;position:relative;padding-left:0;}
-.profile-info-section::before{content:'';position:absolute;left:36px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,rgba(0,217,255,0.5) 0%,rgba(0,217,255,0.1) 100%);z-index:0;}
-.profile-info-section:first-of-type{margin-top:32px;}
-
-.profile-section-title{font-size:0;font-weight:0;letter-spacing:0;color:transparent;text-transform:none;padding:0;background:transparent;border:none;margin:0;display:none;}
-.profile-info-item{display:flex;align-items:center;justify-content:space-between;padding:0;border:none;margin-bottom:24px;padding-left:70px;position:relative;}
-.profile-info-item::before{content:'';position:absolute;left:26px;top:3px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:3px solid var(--accent);cursor:pointer;transition:all .3s;z-index:1;}
-.profile-info-item:hover::before{box-shadow:0 0 15px rgba(0,217,255,0.5);transform:scale(1.2);}
-
-.profile-info-label{font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:6px;letter-spacing:1px;display:block;}
-.profile-info-value{font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;color:var(--text);background:rgba(0,217,255,0.08);border:1px solid rgba(0,217,255,0.2);border-radius:12px;padding:14px 16px;text-align:left;}
-
-/* Restructure info item layout */
-.profile-info-item{flex-direction:column;align-items:flex-start;}
-.profile-info-value{width:100%;margin-top:6px;}
-
-.profile-stats-grid{display:none;}
-.profile-stat-card{display:none;}
-.profile-stat-label{display:none;}
-.profile-stat-value{display:none;}
+/* New Profile Redesign Styles */
+.profile-header-section{background:linear-gradient(135deg, var(--accent2) 0%, var(--accent) 100%);border-radius:20px;padding:28px 20px;text-align:center;margin-bottom:16px;color:#fff;}
+.profile-avatar-lg{width:90px;height:90px;background:rgba(255,255,255,.2);border:3px solid rgba(255,255,255,.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 16px;font-weight:700;}
+.profile-name-header{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;margin-bottom:4px;}
+.profile-country-header{font-size:12px;opacity:.9;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:12px;}
+.profile-status-badge{display:inline-block;background:rgba(74,222,128,.3);border:1px solid rgba(74,222,128,.6);color:#fff;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
+.profile-info-section{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-bottom:14px;overflow:hidden;}
+.profile-section-title{font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;padding:14px 16px;background:var(--surface2);border-bottom:1px solid var(--border);margin:0;}
+.profile-info-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);}
+.profile-info-item:last-child{border-bottom:none;}
+.profile-info-label{font-size:12px;color:var(--muted);font-weight:600;}
+.profile-info-value{font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.profile-stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px;}
+.profile-stat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center;}
+.profile-stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;font-weight:700;}
+.profile-stat-value{font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--accent);}
 .logout-dash-new{width:100%;background:var(--warn);border:none;border-radius:14px;color:#fff;padding:15px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;}
 .logout-dash-new:active{transform:scale(.98);}
 
@@ -663,64 +651,83 @@ input[type="password"]{padding-right:46px;}
     </div>
   </div>
 
-  <!-- MYSELF (Profile) -->
+  <!-- MYSELF (Profile) - TIMELINE DESIGN -->
   <div class="dash-section" id="sec-profile">
-    <div class="inner-header" style="padding:16px 16px 8px;"><span style="font-size:22px">👤</span><div><div class="inner-title">MYSELF</div><div class="inner-sub">Your account details</div></div></div>
+    <div class="inner-header"><span style="font-size:22px">👤</span><div><div class="inner-title">MYSELF</div><div class="inner-sub">Your account details</div></div></div>
     <div class="section" style="padding:0 16px;">
-      <!-- Profile Header Section - Timeline Style -->
-      <div class="profile-header-section">
-        <div class="profile-avatar-lg" id="profile-avatar-lg-main">—</div>
-        <div class="profile-name-header" id="profile-name-header">—</div>
-        <div class="profile-country-header" id="profile-country-header-main">🌍 —</span></div>
-        <div class="profile-status-badge" id="profile-status-badge">⏳ Pending</div>
+      
+      <!-- Profile Header - Timeline Style -->
+      <div style="text-align:center;margin-bottom:32px;">
+        <div class="profile-avatar-lg" id="profile-avatar-lg-main" style="width:100px;height:100px;margin:0 auto 16px;background:linear-gradient(135deg,#1e3a8a,#0369a1);box-shadow:0 0 30px rgba(0,217,255,0.2);">—</div>
+        <div class="profile-name-header" id="profile-name-header" style="font-size:24px;margin-bottom:8px;">—</div>
+        <div class="profile-country-header" id="profile-country-header-main" style="font-size:12px;color:var(--muted);margin-bottom:12px;">🌍 —</div>
+        <div class="profile-status-badge" id="profile-status-badge" style="display:inline-block;background:rgba(255,152,0,0.15);color:#ff9800;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:600;">🟢 Active</div>
       </div>
 
-      <!-- Timeline Divider -->
+      <!-- Timeline Line Separator -->
       <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(0,217,255,0.3),transparent);margin:32px 0 20px 0;"></div>
 
-      <!-- Timeline Items Section -->
-      <div class="profile-info-section">
-        <div class="profile-info-item">
-          <span class="profile-info-label">Username</span>
-          <span class="profile-info-value" id="profile-user-new">—</span>
-        </div>
+      <!-- Timeline Item 1: Username -->
+      <div style="margin-bottom:20px;padding-left:50px;position:relative;">
+        <div style="position:absolute;left:15px;top:5px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:3px solid var(--accent);"></div>
+        <div style="font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:4px;">👤 Username</div>
+        <span class="profile-info-value" id="profile-user-new" style="display:block;padding:10px 14px;background:rgba(0,217,255,0.08);border:1px solid rgba(0,217,255,0.2);border-radius:10px;font-size:13px;">—</span>
       </div>
 
-      <div class="profile-info-section">
-        <div class="profile-info-item">
-          <span class="profile-info-label">Phone Number</span>
-          <span class="profile-info-value" id="profile-phone-new">—</span>
-        </div>
+      <!-- Timeline Item 2: Country -->
+      <div style="margin-bottom:20px;padding-left:50px;position:relative;">
+        <div style="position:absolute;left:15px;top:5px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:3px solid var(--accent);"></div>
+        <div style="font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:4px;">🌍 Country</div>
+        <span class="profile-info-value" id="profile-ctry-new" style="display:block;padding:10px 14px;background:rgba(0,217,255,0.08);border:1px solid rgba(0,217,255,0.2);border-radius:10px;font-size:13px;">—</span>
       </div>
 
-      <div class="profile-info-section">
-        <div class="profile-info-item">
-          <span class="profile-info-label">Account Status</span>
-          <span class="profile-info-value" id="profile-status-new">Verified ✓</span>
-        </div>
+      <!-- Timeline Item 3: Phone -->
+      <div style="margin-bottom:20px;padding-left:50px;position:relative;">
+        <div style="position:absolute;left:15px;top:5px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:3px solid var(--accent);"></div>
+        <div style="font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:4px;">📱 Phone</div>
+        <span class="profile-info-value" id="profile-phone-new" style="display:block;padding:10px 14px;background:rgba(0,217,255,0.08);border:1px solid rgba(0,217,255,0.2);border-radius:10px;font-size:13px;">—</span>
       </div>
 
-      <div class="profile-info-section">
-        <div class="profile-info-item">
-          <span class="profile-info-label">Total Invested</span>
-          <span class="profile-info-value" id="profile-stat-invested">UGX 0</span>
-        </div>
+      <!-- Timeline Item 4: Member Since -->
+      <div style="margin-bottom:20px;padding-left:50px;position:relative;">
+        <div style="position:absolute;left:15px;top:5px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:3px solid var(--accent);"></div>
+        <div style="font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:4px;">📅 Member Since</div>
+        <span class="profile-info-value" id="profile-since-new" style="display:block;padding:10px 14px;background:rgba(0,217,255,0.08);border:1px solid rgba(0,217,255,0.2);border-radius:10px;font-size:13px;">2025</span>
       </div>
 
-      <div class="profile-info-section">
-        <div class="profile-info-item">
-          <span class="profile-info-label">Active Earnings</span>
-          <span class="profile-info-value" id="profile-stat-earned" style="color:#4CAF50;">+UGX 0</span>
-        </div>
+      <!-- Timeline Item 5: Total Invested -->
+      <div style="margin-bottom:20px;padding-left:50px;position:relative;">
+        <div style="position:absolute;left:15px;top:5px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:3px solid var(--accent);"></div>
+        <div style="font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:4px;">💰 Total Invested</div>
+        <span class="profile-stat-value" id="profile-stat-invested" style="display:block;padding:10px 14px;background:rgba(0,217,255,0.08);border:1px solid rgba(0,217,255,0.2);border-radius:10px;font-size:13px;color:var(--accent);">0</span>
       </div>
 
-      <!-- Timeline Divider -->
+      <!-- Timeline Item 6: Total Earned -->
+      <div style="margin-bottom:20px;padding-left:50px;position:relative;">
+        <div style="position:absolute;left:15px;top:5px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:3px solid var(--accent);"></div>
+        <div style="font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:4px;">📈 Total Earned</div>
+        <span class="profile-stat-value" id="profile-stat-earned" style="display:block;padding:10px 14px;background:rgba(0,217,255,0.08);border:1px solid rgba(0,217,255,0.2);border-radius:10px;font-size:13px;color:#4CAF50;">0</span>
+      </div>
+
+      <!-- Timeline Item 7: Days Active -->
+      <div style="margin-bottom:20px;padding-left:50px;position:relative;">
+        <div style="position:absolute;left:15px;top:5px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:3px solid var(--accent);"></div>
+        <div style="font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:4px;">⏳ Days Active</div>
+        <span class="profile-stat-value" id="profile-stat-days" style="display:block;padding:10px 14px;background:rgba(0,217,255,0.08);border:1px solid rgba(0,217,255,0.2);border-radius:10px;font-size:13px;color:var(--accent);">0</span>
+      </div>
+
+      <!-- Timeline Item 8: Active Deposits -->
+      <div style="margin-bottom:32px;padding-left:50px;position:relative;">
+        <div style="position:absolute;left:15px;top:5px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:3px solid var(--accent);"></div>
+        <div style="font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:4px;">📊 Active Deposits</div>
+        <span class="profile-stat-value" id="profile-stat-deposits" style="display:block;padding:10px 14px;background:rgba(0,217,255,0.08);border:1px solid rgba(0,217,255,0.2);border-radius:10px;font-size:13px;color:var(--accent);">0</span>
+      </div>
+
+      <!-- Timeline Line Separator -->
       <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(0,217,255,0.3),transparent);margin:32px 0 20px 0;"></div>
 
-      <!-- Action Buttons -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:28px;margin-bottom:20px;">
-        <button class="logout-dash-new" onclick="doLogout()" style="background:var(--accent);width:100%;grid-column:1/-1;">🚪 Sign Out</button>
-      </div>
+      <!-- Sign Out Button -->
+      <button class="logout-dash-new" onclick="doLogout()" style="width:100%;margin-bottom:20px;">🚪 Sign Out</button>
     </div>
   </div>
 
