@@ -168,21 +168,6 @@ input[type="password"]{padding-right:46px;}
 @keyframes pulse-glow{0%,100%{box-shadow:0 0 20px rgba(0,217,255,0.6),inset 0 0 20px rgba(0,217,255,0.05);}50%{box-shadow:0 0 40px rgba(0,217,255,0.6),inset 0 0 30px rgba(0,217,255,0.1);}}
 @keyframes text-flicker{0%{text-shadow:0 0 8px rgba(255,107,53,0.6);}50%{text-shadow:0 0 15px rgba(255,107,53,0.6),0 0 25px rgba(255,107,53,0.6);}100%{text-shadow:0 0 8px rgba(255,107,53,0.6);}}
 .neon-panel{animation:pulse-glow 3s ease-in-out infinite;}
-
-/* ===== BRUTALIST MYSELF PAGE ===== */
-.brutalist-header{background:#151B3D;border:1px solid #2A3557;padding:20px;text-align:center;margin-bottom:20px;}
-.brutalist-avatar{width:70px;height:70px;background:#2A3557;border:2px solid #2A3557;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px;}
-.brutalist-username{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:#E8ECFF;text-transform:uppercase;letter-spacing:2px;}
-.brutalist-country{font-family:'Space Mono',monospace;font-size:11px;color:#8899BB;letter-spacing:1px;margin-top:8px;}
-.brutalist-row{background:#0F1535;border:1px solid #2A3557;padding:14px;margin-bottom:8px;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.brutalist-label{font-family:'Space Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#8899BB;}
-.brutalist-value{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#FF6B35;text-align:right;}
-.brutalist-stats{background:#151B3D;border:1px solid #2A3557;padding:16px;margin:20px 0;display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.brutalist-stat{background:#0F1535;border:1px solid #2A3557;padding:12px;text-align:center;}
-.brutalist-stat-value{font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:#00D9FF;}
-.brutalist-stat-label{font-family:'Space Mono',monospace;font-size:9px;color:#8899BB;margin-top:4px;}
-.brutalist-btn{width:100%;background:#FF4757;border:1px solid #FF4757;color:#fff;padding:14px;cursor:pointer;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-top:20px;}
-.brutalist-btn:hover{background:#FF6B7A;}
 .action-grid{display:flex;flex-direction:column;gap:12px;padding-left:16px;}
 .action-btn{border:none;border-radius:14px;padding:14px 18px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:10px;width:fit-content;}
 .action-btn:active{transform:scale(.96);}
@@ -545,6 +530,18 @@ input[type="password"]{padding-right:46px;}
   <a href="#" id="whatsapp-float-btn" class="whatsapp-float" target="_blank">💬</a>
 
   <!-- TNS (History) -->
+  <div class="dash-section" id="sec-history">
+    <div class="inner-header"><span style="font-size:22px">📋</span><div><div class="inner-title">Activity</div><div class="inner-sub">All your transactions</div></div></div>
+    <div class="tx-filter-tabs">
+      <div class="tx-tab active" onclick="filterHistory('Deposit',this)">💳 Credit</div>
+      <div class="tx-tab" onclick="filterHistory('Withdrawal',this)">💸 Withdrawals</div>
+      <div class="tx-tab" onclick="filterHistory('Profit',this)">📈 Profits</div>
+      <div class="tx-tab" onclick="filterHistory('Bonus',this)">🎁 Bonuses</div>
+      <div class="tx-tab" onclick="filterHistory('Referral',this)">🔗 Referral</div>
+    </div>
+    <div class="section" id="history-list"><div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">No Records Yet</div><div class="empty-text">Your transaction history will appear here.</div></div></div>
+  </div>
+
   <!-- REFER (Team) - NEON STYLE -->
   <div class="dash-section" id="sec-team">
     <div class="inner-header"><span style="font-size:22px">👥</span><div><div class="inner-title">REFER</div><div class="inner-sub">Your referral network</div></div></div>
@@ -653,70 +650,66 @@ input[type="password"]{padding-right:46px;}
     </div>
   </div>
 
-  <!-- MYSELF (Profile) - BRUTALIST -->
+  <!-- MYSELF (Profile) -->
   <div class="dash-section" id="sec-profile">
     <div class="inner-header"><span style="font-size:22px">👤</span><div><div class="inner-title">MYSELF</div><div class="inner-sub">Your account details</div></div></div>
     <div class="section">
-      
-      <!-- BRUTALIST HEADER -->
-      <div class="brutalist-header">
-        <div class="brutalist-avatar" id="profile-avatar-lg-main">—</div>
-        <div class="brutalist-username" id="profile-name-header">—</div>
-        <div class="brutalist-country" id="profile-country-header-main">—</div>
+      <!-- Profile Header Section -->
+      <div class="profile-header-section">
+        <div class="profile-avatar-lg" id="profile-avatar-lg-main">—</div>
+        <div class="profile-name-header" id="profile-name-header">—</div>
+        <div class="profile-country-header" id="profile-country-header-main">🌍 —</div>
+        <div class="profile-status-badge" id="profile-status-badge">🟢 Active Investor</div>
       </div>
 
-      <!-- BRUTALIST STATS -->
-      <div class="brutalist-stats">
-        <div class="brutalist-stat">
-          <div class="brutalist-stat-value" id="profile-stat-invested">0</div>
-          <div class="brutalist-stat-label">INVESTED</div>
+      <!-- Personal Information Card -->
+      <div class="profile-info-section">
+        <div class="profile-section-title">📝 Personal Information</div>
+        <div class="profile-info-item">
+          <span class="profile-info-label">Username</span>
+          <span class="profile-info-value" id="profile-user-new">—</span>
         </div>
-        <div class="brutalist-stat">
-          <div class="brutalist-stat-value" id="profile-stat-earned">0</div>
-          <div class="brutalist-stat-label">EARNED</div>
-        </div>
-        <div class="brutalist-stat">
-          <div class="brutalist-stat-value" id="profile-stat-days">0</div>
-          <div class="brutalist-stat-label">DAYS ACTIVE</div>
-        </div>
-        <div class="brutalist-stat">
-          <div class="brutalist-stat-value" id="profile-stat-deposits">0</div>
-          <div class="brutalist-stat-label">DEPOSITS</div>
+        <div class="profile-info-item">
+          <span class="profile-info-label">Country</span>
+          <span class="profile-info-value" id="profile-ctry-new">—</span>
         </div>
       </div>
 
-      <!-- PERSONAL INFORMATION -->
-      <div style="margin-bottom:16px;">
-        <div style="background:#151B3D;border:1px solid #2A3557;padding:12px;margin-bottom:8px;font-family:'Space Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#8899BB;">PERSONAL INFORMATION</div>
-        
-        <div class="brutalist-row">
-          <div class="brutalist-label">Username</div>
-          <div class="brutalist-value" id="profile-user-new">—</div>
+      <!-- Account Information Card -->
+      <div class="profile-info-section">
+        <div class="profile-section-title">🔐 Account Information</div>
+        <div class="profile-info-item">
+          <span class="profile-info-label">Phone Number</span>
+          <span class="profile-info-value" id="profile-phone-new">—</span>
         </div>
-        
-        <div class="brutalist-row">
-          <div class="brutalist-label">Country</div>
-          <div class="brutalist-value" id="profile-ctry-new">—</div>
+        <div class="profile-info-item">
+          <span class="profile-info-label">Member Since</span>
+          <span class="profile-info-value" id="profile-since-new">2025</span>
         </div>
       </div>
 
-      <!-- ACCOUNT INFORMATION -->
-      <div style="margin-bottom:16px;">
-        <div style="background:#151B3D;border:1px solid #2A3557;padding:12px;margin-bottom:8px;font-family:'Space Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#8899BB;">ACCOUNT INFORMATION</div>
-        
-        <div class="brutalist-row">
-          <div class="brutalist-label">Phone Number</div>
-          <div class="brutalist-value" id="profile-phone-new">—</div>
+      <!-- Investment Statistics -->
+      <div class="profile-stats-grid">
+        <div class="profile-stat-card">
+          <div class="profile-stat-label">Total Invested</div>
+          <div class="profile-stat-value" id="profile-stat-invested">0</div>
         </div>
-        
-        <div class="brutalist-row">
-          <div class="brutalist-label">Member Since</div>
-          <div class="brutalist-value" id="profile-since-new">2025</div>
+        <div class="profile-stat-card">
+          <div class="profile-stat-label">Total Earned</div>
+          <div class="profile-stat-value" id="profile-stat-earned">0</div>
+        </div>
+        <div class="profile-stat-card">
+          <div class="profile-stat-label">Days Active</div>
+          <div class="profile-stat-value" id="profile-stat-days">0</div>
+        </div>
+        <div class="profile-stat-card">
+          <div class="profile-stat-label">Active Deposits</div>
+          <div class="profile-stat-value" id="profile-stat-deposits">0</div>
         </div>
       </div>
 
-      <!-- SIGN OUT BUTTON -->
-      <button class="brutalist-btn" onclick="doLogout()">SIGN OUT</button>
+      <!-- Sign Out Button -->
+      <button class="logout-dash-new" onclick="doLogout()">🚪 Sign Out</button>
     </div>
   </div>
 
@@ -790,6 +783,7 @@ input[type="password"]{padding-right:46px;}
 
   <nav class="bottom-nav">
     <div class="nav-item active" onclick="switchTab('home')"><span class="nav-icon">🏠</span><span class="nav-label">DASHBOARD</span></div>
+    <div class="nav-item" onclick="switchTab('history')"><span class="nav-icon">📋</span><span class="nav-label">Activity</span></div>
     <div class="nav-item" onclick="switchTab('team')"><span class="nav-icon">👥</span><span class="nav-label">REFER</span></div>
     <div class="nav-item" onclick="switchTab('plan')"><span class="nav-icon">📊</span><span class="nav-label">TABLE</span></div>
     <div class="nav-item" onclick="switchTab('profile')"><span class="nav-icon">👤</span><span class="nav-label">MYSELF</span></div>
@@ -870,7 +864,7 @@ let settingsData = {
 // Store active polling intervals per transaction
 let activePollingIntervals = {};
 
-const tabMap = {home:'sec-home',team:'sec-team',plan:'sec-plan',profile:'sec-profile',deposit:'sec-deposit',withdraw:'sec-withdraw',reinvest:'sec-reinvest'};
+const tabMap = {home:'sec-home',history:'sec-history',team:'sec-team',plan:'sec-plan',profile:'sec-profile',deposit:'sec-deposit',withdraw:'sec-withdraw',reinvest:'sec-reinvest'};
 const navOrder = ['home','history','team','plan','profile'];
 
 function fmt(n){ return 'UGX '+Number(n||0).toLocaleString(); }
@@ -885,7 +879,7 @@ const avatarEmojis = [
   '👨‍🦱', '👨‍🦲', '👨‍🦳', '👨‍🦰',
   '👩‍🦱', '👩‍🦲', '👩‍🦳', '👩‍🦰',
   '🧔', '🧔‍♀️', '👨‍💼', '👩‍💼',
-  '👨‍🏫', '👩‍🏫', '👨‍💻', '👩‍💻',
+  '👨‍🏫', '👩‍🏫', '👨‍💻', '👩‍??',
   '👨‍🎓', '👩‍🎓', '👨‍🏥', '👩‍🏥',
   '👨‍🍳', '👩‍🍳', '👨‍🎨', '👩‍🎨',
   '👨‍🏭', '👩‍🏭', '👨‍✈️', '👩‍✈️',
