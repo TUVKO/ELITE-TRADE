@@ -154,11 +154,11 @@ input[type="password"]{padding-right:46px;}
 .dash-section.active{display:block;}
 .stats-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:22px 20px;}
 
-/* 4-Box Grid Layout */
-.four-box-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px;}
-.info-box{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;}
-.box-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px;font-weight:600;}
-.box-value{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--accent3);}
+/* 4-Box Grid Layout - Horizontal Single Row */
+.four-box-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+.info-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:10px 8px;text-align:center;}
+.box-label{font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:6px;font-weight:600;}
+.box-value{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--accent3);word-break:break-word;}
 
 .balance-big{text-align:center;padding:8px 0 16px;}
 .balance-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:8px;}
@@ -508,22 +508,22 @@ input[type="password"]{padding-right:46px;}
   <div class="dash-section active" id="sec-home">
     <div class="section">
       <div class="stats-card">
-        <!-- 4 Box Grid -->
+        <!-- 4 Box Grid - Horizontal -->
         <div class="four-box-grid">
           <div class="info-box">
-            <div class="box-label">Investment Account</div>
+            <div class="box-label">Committed</div>
             <div class="box-value" id="stat-investment-amount">UGX 0</div>
           </div>
           <div class="info-box">
-            <div class="box-label">Available Balance</div>
+            <div class="box-label">Funds</div>
             <div class="box-value" id="stat-available-balance">UGX 0</div>
           </div>
           <div class="info-box">
-            <div class="box-label">Total Income</div>
+            <div class="box-label">Income</div>
             <div class="box-value" id="stat-total-income">UGX 0</div>
           </div>
           <div class="info-box">
-            <div class="box-label">Total Withdrawal</div>
+            <div class="box-label">Withdrawn</div>
             <div class="box-value" id="stat-total-withdrawal">UGX 0</div>
           </div>
         </div>
@@ -1441,7 +1441,7 @@ function doRegister(){
     const newUser={
       username, password, email, country,
       phone: fullPhone,
-      balance:4000, invested:0, withdrawn:0, profitEarned:4000,
+      balance:4000, investment:0, totalWithdrawn:0, totalIncome:4000,
       activated:false, locked:false,
       referredBy:refCode,
       joinedDate:new Date().getFullYear().toString(),
@@ -1837,8 +1837,10 @@ async function doDeposit() {
             if(l1Snap.exists()) {
               const l1User = l1Snap.val();
               const l1NewBalance = (l1User.balance || 0) + l1Bonus;
+              const l1NewTotalIncome = (l1User.totalIncome || 0) + l1Bonus;
               const l1Updates = {
                 balance: l1NewBalance,
+                totalIncome: l1NewTotalIncome,
                 [`transactions/tx_referral_l1_${Date.now()}`]: {
                   type: 'Referral',
                   amount: l1Bonus,
@@ -1865,8 +1867,10 @@ async function doDeposit() {
                 if(l2Snap.exists()) {
                   const l2User = l2Snap.val();
                   const l2NewBalance = (l2User.balance || 0) + l2Bonus;
+                  const l2NewTotalIncome = (l2User.totalIncome || 0) + l2Bonus;
                   const l2Updates = {
                     balance: l2NewBalance,
+                    totalIncome: l2NewTotalIncome,
                     [`transactions/tx_referral_l2_${Date.now()}`]: {
                       type: 'Referral',
                       amount: l2Bonus,
@@ -1893,8 +1897,10 @@ async function doDeposit() {
                     if(l3Snap.exists()) {
                       const l3User = l3Snap.val();
                       const l3NewBalance = (l3User.balance || 0) + l3Bonus;
+                      const l3NewTotalIncome = (l3User.totalIncome || 0) + l3Bonus;
                       const l3Updates = {
                         balance: l3NewBalance,
+                        totalIncome: l3NewTotalIncome,
                         [`transactions/tx_referral_l3_${Date.now()}`]: {
                           type: 'Referral',
                           amount: l3Bonus,
