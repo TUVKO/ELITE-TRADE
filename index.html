@@ -519,15 +519,16 @@ input[type="password"]{padding-right:46px;}
       </div>
     </div>
     <div class="section">
-      <div class="action-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin:20px 0;">
-        <button class="action-btn" style="background:#22c55e;border:none;color:white;padding:16px;border-radius:12px;font-weight:600;font-size:16px;" onclick="switchTab('deposit')"><span class="btn-icon">💳</span>Credit</button>
-        <button class="action-btn" style="background:#a855f7;border:none;color:white;padding:16px;border-radius:12px;font-weight:600;font-size:16px;" onclick="switchTab('reinvest')"><span class="btn-icon">🔄</span>Re-Invest</button>
-        <button class="action-btn" style="background:#ef4444;border:none;color:white;padding:16px;border-radius:12px;font-weight:600;font-size:16px;" onclick="switchTab('withdraw')"><span class="btn-icon">💸</span>Withdraw</button>
-        <button class="action-btn" style="background:#0ea5e9;border:none;color:white;padding:16px;border-radius:12px;font-weight:600;font-size:16px;" onclick="switchTab('team')"><span class="btn-icon">👥</span>Team</button>
+      <div class="action-grid" style="display:flex;flex-direction:column;gap:12px;margin:20px 0;width:fit-content;">
+        <button class="action-btn" style="background:#3b82f6;border:none;color:white;padding:16px 24px;border-radius:12px;font-weight:600;font-size:16px;width:fit-content;" onclick="switchTab('deposit')"><span class="btn-icon">💳</span>Credit</button>
+        <button class="action-btn" style="background:#6366f1;border:none;color:white;padding:16px 24px;border-radius:12px;font-weight:600;font-size:16px;width:fit-content;" onclick="switchTab('withdraw')"><span class="btn-icon">💸</span>Withdraw</button>
+        <button class="action-btn" style="background:#f59e0b;border:none;color:white;padding:16px 24px;border-radius:12px;font-weight:600;font-size:16px;width:fit-content;" onclick="switchTab('reinvest')"><span class="btn-icon">🔄</span>Reinvest</button>
+        <button class="action-btn" style="background:#14b8a6;border:none;color:white;padding:16px 24px;border-radius:12px;font-weight:600;font-size:16px;width:fit-content;" onclick="switchTab('team')"><span class="btn-icon">👥</span>Team</button>
       </div>
     </div>
     <div class="section">
       <button class="wa-btn" onclick="openWaGroup()">?? Whatsapp Channel</button>
+      <button class="wa-btn" style="background:#22c55e;margin-top:12px;" onclick="openSupportChat()">📞 Support Helpline</button>
     </div>
   </div>
 
@@ -543,7 +544,7 @@ input[type="password"]{padding-right:46px;}
       <div class="tx-tab" onclick="filterHistory('Bonus',this)">🎁 Bonuses</div>
       <div class="tx-tab" onclick="filterHistory('Referral',this)">🔗 Referral</div>
     </div>
-    <div class="section" id="history-list"><div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">No Records Yet</div><div class="empty-text">Your transaction history will appear here.</div></div></div>
+    <div class="section" id="history-list"><div class="empty-state"><div class="empty-icon">??</div><div class="empty-title">No Records Yet</div><div class="empty-text">Your transaction history will appear here.</div></div></div>
   </div>
 
   <!-- REFER (Team) - NEON STYLE -->
@@ -1026,6 +1027,17 @@ function copyRef(){
   }
 }
 function openWaGroup(){ if(settingsData.waGroup) window.open(settingsData.waGroup,'_blank'); else showModal('💬','Coming Soon','WhatsApp group link will be available soon. Contact support for now.'); }
+
+function openSupportChat(){ 
+  if(settingsData.waSupport){
+    const phone = settingsData.waSupport;
+    const message = 'Hi, I need support with my ELITETRADE account';
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  } else {
+    showModal('📞','Support Helpline','Support WhatsApp link is not configured yet. Please contact support via WhatsApp channel.');
+  }
+}
 
 function updateBalanceUI(){
   if(!currentUser) return;
