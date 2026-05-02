@@ -137,10 +137,37 @@ input[type="password"]{padding-right:46px;}
 .stat-label{font-size:8px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px;}
 .stat-value{font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;}
 .stat-value.dep{color:var(--gold)}.stat-value.earn{color:var(--accent3)}.stat-value.with{color:var(--warn)}.stat-value.total{color:var(--accent)}
-.ref-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;}
-.ref-url{flex:1;font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.copy-btn{background:var(--accent);border:none;border-radius:8px;color:#fff;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;padding:7px 14px;cursor:pointer;}
+/* ===== NEON REFER SECTION ===== */
+.neon-panel{border:2px solid var(--accent);background:rgba(15,21,53,0.6);backdrop-filter:blur(10px);margin-bottom:16px;box-shadow:0 0 20px rgba(0,217,255,0.6),inset 0 0 20px rgba(0,217,255,0.05);transition:all .3s cubic-bezier(.34,1.56,.64,1);}
+.neon-panel:hover{box-shadow:0 0 40px rgba(0,217,255,0.6),inset 0 0 30px rgba(0,217,255,0.1),0 0 60px rgba(0,217,255,0.6);border-color:#FF1493;}
+.neon-panel-header{padding:16px;border-bottom:1px solid rgba(0,217,255,0.2);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);text-shadow:0 0 8px rgba(0,217,255,0.6);font-weight:700;}
+.neon-panel-content{padding:20px 16px;}
+.stat-section{margin-bottom:20px;}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;font-weight:700;}
+.stat-value{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;color:#FF6B35;text-shadow:0 0 15px rgba(255,107,53,0.6);letter-spacing:1px;margin-bottom:8px;animation:text-flicker 2s ease-in-out infinite;}
+.stat-sublabel{font-size:11px;color:var(--muted);}
+.commission-row{display:grid;grid-template-columns:1fr 100px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,217,255,0.15);align-items:center;font-size:13px;}
+.commission-row:last-child{border-bottom:none;}
+.commission-level{color:var(--muted);font-size:12px;}
+.commission-rate{font-family:'JetBrains Mono',monospace;color:#FF6B35;text-shadow:0 0 8px rgba(255,107,53,0.6);font-weight:700;font-size:16px;text-align:center;}
+.commission-condition{color:var(--muted);font-size:12px;text-align:right;}
+.neon-divider{height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);box-shadow:0 0 10px rgba(0,217,255,0.6);margin:16px 0;}
+.network-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
+.stat-card{border:1px solid rgba(0,217,255,0.2);background:rgba(0,217,255,0.03);padding:12px;text-align:center;transition:all .3s;}
+.stat-card:hover{border-color:var(--accent);background:rgba(0,217,255,0.08);box-shadow:0 0 20px rgba(0,217,255,0.6);}
+.stat-card-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--accent);margin-bottom:4px;text-shadow:0 0 10px rgba(0,217,255,0.6);}
+.stat-card-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;}
+.referral-link-wrapper{background:rgba(0,217,255,0.08);border:1px solid rgba(0,217,255,0.3);border-radius:0;padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--accent);word-break:break-all;font-family:'JetBrains Mono',monospace;}
+.referral-link-icon{font-size:14px;flex-shrink:0;opacity:.7;}
+.referral-link-text{flex:1;opacity:.85;}
+.ref-box{background:rgba(0,217,255,0.08);border:1px solid rgba(0,217,255,0.3);border-radius:0;padding:14px;display:flex;align-items:center;gap:10px;}
+.ref-url{flex:1;font-size:11px;color:var(--accent);font-family:'JetBrains Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.copy-btn{background:var(--accent);border:none;color:var(--bg);padding:8px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;box-shadow:0 0 15px rgba(0,217,255,0.6);}
+.copy-btn:hover{background:#FF1493;box-shadow:0 0 25px rgba(255,20,147,0.6);}
 .copy-btn:active{transform:scale(.95);}
+@keyframes pulse-glow{0%,100%{box-shadow:0 0 20px rgba(0,217,255,0.6),inset 0 0 20px rgba(0,217,255,0.05);}50%{box-shadow:0 0 40px rgba(0,217,255,0.6),inset 0 0 30px rgba(0,217,255,0.1);}}
+@keyframes text-flicker{0%{text-shadow:0 0 8px rgba(255,107,53,0.6);}50%{text-shadow:0 0 15px rgba(255,107,53,0.6),0 0 25px rgba(255,107,53,0.6);}100%{text-shadow:0 0 8px rgba(255,107,53,0.6);}}
+.neon-panel{animation:pulse-glow 3s ease-in-out infinite;}
 .action-grid{display:flex;flex-direction:column;gap:12px;padding-left:16px;}
 .action-btn{border:none;border-radius:14px;padding:14px 18px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:10px;width:fit-content;}
 .action-btn:active{transform:scale(.96);}
@@ -515,37 +542,79 @@ input[type="password"]{padding-right:46px;}
     <div class="section" id="history-list"><div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">No Records Yet</div><div class="empty-text">Your transaction history will appear here.</div></div></div>
   </div>
 
-  <!-- REFER (Team) - Updated -->
+  <!-- REFER (Team) - NEON STYLE -->
   <div class="dash-section" id="sec-team">
     <div class="inner-header"><span style="font-size:22px">👥</span><div><div class="inner-title">REFER</div><div class="inner-sub">Your referral network</div></div></div>
     <div class="section">
-      <div class="ref-main-card">
-        <div class="ref-total-card">
-          <div class="ref-total-label">TOTAL REFERRAL BONUSES</div>
-          <div class="ref-total-value" id="total-ref-earned">UGX 0</div>
+      
+      <!-- EARNINGS PANEL -->
+      <div class="neon-panel">
+        <div class="neon-panel-header">>>> TOTAL_EARNINGS</div>
+        <div class="neon-panel-content">
+          <div class="stat-section">
+            <div class="stat-label">Total Referral Bonuses</div>
+            <div class="stat-value" id="total-ref-earned">UGX 0</div>
+            <div class="stat-sublabel">Accumulated from your network</div>
+          </div>
+
+          <div class="neon-divider"></div>
+
+          <div class="network-stats">
+            <div class="stat-card">
+              <div class="stat-card-value">0</div>
+              <div class="stat-card-label">Active Refs</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-value">0</div>
+              <div class="stat-card-label">This Month</div>
+            </div>
+          </div>
         </div>
-        
-        <table class="ref-program-table">
-          <thead>
-            <tr><th>Level</th><th>Commission</th><th>Condition</th></tr>
-          </thead>
-          <tbody>
-            <tr><th>Level 1</th><td id="ref-pct-l1-display">10%</td><td>Direct referrals</td></tr>
-            <tr><th>Level 2</th><td id="ref-pct-l2-display">4%</td><td>Their referrals</td></tr>
-            <tr><th>Level 3</th><td id="ref-pct-l3-display">2%</td><td>3rd level network</td></tr>
-          </tbody>
-        </table>
       </div>
-      
-      <div class="section-title">Your Referral Link</div>
-      <div class="ref-box" style="margin-bottom:14px">
-        <span style="font-size:16px;">🔗</span>
-        <div class="ref-url" id="ref-url2">—</div>
-        <button class="copy-btn" onclick="copyRef()">Copy</button>
+
+      <!-- COMMISSION STRUCTURE PANEL -->
+      <div class="neon-panel">
+        <div class="neon-panel-header">>>> COMMISSION_STRUCTURE</div>
+        <div class="neon-panel-content">
+          <div class="commission-row">
+            <div class="commission-level">Level 1</div>
+            <div class="commission-rate" id="ref-pct-l1-display">10%</div>
+            <div class="commission-condition">Direct referrals</div>
+          </div>
+          <div class="commission-row">
+            <div class="commission-level">Level 2</div>
+            <div class="commission-rate" id="ref-pct-l2-display">4%</div>
+            <div class="commission-condition">Their referrals</div>
+          </div>
+          <div class="commission-row">
+            <div class="commission-level">Level 3</div>
+            <div class="commission-rate" id="ref-pct-l3-display">2%</div>
+            <div class="commission-condition">3rd level network</div>
+          </div>
+        </div>
       </div>
-      
-      <div class="section-title">Team Members</div>
-      <div id="ref-list-wrap"><div class="empty-state" style="padding:30px 20px"><div class="empty-icon">🤝</div><div class="empty-title">No Referrals Yet</div><div class="empty-text">Share your referral link to grow your team.</div></div></div>
+
+      <!-- REFERRAL LINK PANEL -->
+      <div class="neon-panel">
+        <div class="neon-panel-header">>>> YOUR_REFERRAL_LINK</div>
+        <div class="neon-panel-content">
+          <div class="referral-link-wrapper">
+            <span class="referral-link-icon">🔗</span>
+            <span class="referral-link-text" id="ref-url2">—</span>
+            <button class="copy-btn" onclick="copyRef()">Copy</button>
+          </div>
+          <div style="font-size:10px;color:var(--muted);margin-top:10px;line-height:1.5;">
+            Share your link to earn commissions on every deposit from your referrals
+          </div>
+        </div>
+      </div>
+
+      <!-- TEAM MEMBERS -->
+      <div style="margin-top:24px;">
+        <div style="padding:0 16px;margin-bottom:12px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);text-shadow:0 0 8px rgba(0,217,255,0.6);">>>> TEAM_MEMBERS</div>
+        <div id="ref-list-wrap"><div class="empty-state" style="padding:30px 20px"><div class="empty-icon">🤝</div><div class="empty-title">No Referrals Yet</div><div class="empty-text">Share your referral link to grow your team.</div></div></div>
+      </div>
+
     </div>
   </div>
 
@@ -810,7 +879,7 @@ const avatarEmojis = [
   '👨‍🦱', '👨‍🦲', '👨‍🦳', '👨‍🦰',
   '👩‍🦱', '👩‍🦲', '👩‍🦳', '👩‍🦰',
   '🧔', '🧔‍♀️', '👨‍💼', '👩‍💼',
-  '👨‍🏫', '👩‍🏫', '👨‍💻', '👩‍💻',
+  '👨‍🏫', '👩‍🏫', '👨‍💻', '👩‍??',
   '👨‍🎓', '👩‍🎓', '👨‍🏥', '👩‍🏥',
   '👨‍🍳', '👩‍🍳', '👨‍🎨', '👩‍🎨',
   '👨‍🏭', '👩‍🏭', '👨‍✈️', '👩‍✈️',
