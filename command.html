@@ -12,20 +12,20 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
 :root{
-  --bg:#fff5f7;
-  --surface:#ffffff;
-  --surface2:#fff0f4;
-  --surface3:#ffe4e8;
-  --border:#fbcfe8;
-  --accent:#db2777;
-  --accent2:#ec4899;
-  --accent3:#f43f5e;
-  --warn:#e11d48;
-  --gold:#f59e0b;
-  --text:#1f2937;
-  --muted:#9ca3af;
-  --table-header:#064e3b;
-  --ref-bg:#047857;
+  --bg:#0A0E27;
+  --surface:#0F1535;
+  --surface2:#151B3D;
+  --surface3:#1A2147;
+  --border:#2A3557;
+  --accent:#00D9FF;
+  --accent2:#0E7490;
+  --accent3:#00D9FF;
+  --warn:#FF4757;
+  --gold:#FFB800;
+  --text:#E8ECFF;
+  --muted:#8899BB;
+  --table-header:#0E5A7A;
+  --ref-bg:#0D9EAA;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
@@ -731,7 +731,7 @@ function obliterateUserData(){
   }); 
 }
 
-function confirmAction(title, text){ return Swal.fire({title, text, icon:'warning', showCancelButton:true, confirmButtonColor:'#db2777', confirmButtonText:'Yes, proceed!'}).then(result=>result.isConfirmed); }
+function confirmAction(title, text){ return Swal.fire({title, text, icon:'warning', showCancelButton:true, confirmButtonColor:'#00D9FF', confirmButtonText:'Yes, proceed!'}).then(result=>result.isConfirmed); }
 
 function renderDashboard(){
   const users=Object.values(allUsers);
