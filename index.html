@@ -181,14 +181,12 @@ input[type="password"]{padding-right:46px;}
 .plan-table thead tr{background:var(--table-header);}
 .plan-table thead th{padding:12px 10px;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--accent3);text-align:center;border-bottom:2px solid var(--accent);border-right:1px solid var(--table-border);}
 .plan-table thead th:last-child{border-right:none;}
-.plan-table tbody tr{border-bottom:1px solid var(--table-border);}
-.plan-table tbody tr:nth-child(odd){background:var(--ref-bg);}
-.plan-table tbody tr:nth-child(even){background:#065f46;}
-.plan-table tbody td{padding:10px 8px;font-family:'JetBrains Mono',monospace;font-size:10px;text-align:center;border-right:1px solid var(--table-border);color:#fff;}
+.plan-table tbody tr{border-bottom:1px solid var(--table-border);background:transparent;}
+.plan-table tbody td{padding:10px 8px;font-family:'JetBrains Mono',monospace;font-size:10px;text-align:center;border-right:1px solid var(--table-border);color:#E8ECFF;}
 .plan-table tbody td:last-child{border-right:none;}
-.plan-table tbody td:first-child{color:var(--gold);font-weight:700;}
-.plan-table tbody td:nth-child(2){color:var(--accent3);}
-.plan-table tbody td:nth-child(3){color:#fff;font-weight:700;}
+.plan-table tbody td:first-child{color:#00D9FF;font-weight:700;}
+.plan-table tbody td:nth-child(2){color:#FFB800;}
+.plan-table tbody td:nth-child(3){color:#00D9FF;font-weight:700;}
 .scroll-hint{text-align:center;padding:8px;font-size:9px;color:var(--muted);background:var(--surface);border-top:1px solid var(--border);}
 .plan-footer{padding:12px;background:var(--surface2);}
 .start-invest-btn{width:100%;background:var(--accent);border:none;border-radius:12px;padding:13px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;color:#fff;cursor:pointer;}
@@ -490,7 +488,7 @@ input[type="password"]{padding-right:46px;}
     </div>
     <div class="section">
       <div class="action-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin:20px 0;">
-        <button class="action-btn" style="background:#22c55e;border:none;color:white;padding:16px;border-radius:12px;font-weight:600;font-size:16px;" onclick="switchTab('deposit')"><span class="btn-icon">💳</span>Top-up</button>
+        <button class="action-btn" style="background:#22c55e;border:none;color:white;padding:16px;border-radius:12px;font-weight:600;font-size:16px;" onclick="switchTab('deposit')"><span class="btn-icon">💳</span>Credit</button>
         <button class="action-btn" style="background:#a855f7;border:none;color:white;padding:16px;border-radius:12px;font-weight:600;font-size:16px;" onclick="switchTab('reinvest')"><span class="btn-icon">🔄</span>Re-Invest</button>
         <button class="action-btn" style="background:#ef4444;border:none;color:white;padding:16px;border-radius:12px;font-weight:600;font-size:16px;" onclick="switchTab('withdraw')"><span class="btn-icon">💸</span>Withdraw</button>
         <button class="action-btn" style="background:#0ea5e9;border:none;color:white;padding:16px;border-radius:12px;font-weight:600;font-size:16px;" onclick="switchTab('history')"><span class="btn-icon">📋</span>Transactions</button>
