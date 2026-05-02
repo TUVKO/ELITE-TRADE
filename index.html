@@ -406,9 +406,9 @@ input[type="password"]{padding-right:46px;}
 <!-- LOGIN -->
 <div class="auth-page" id="login-page">
   <div class="auth-hero">
-    <div class="auth-logo">🌱</div>
+    <img src="https://tuvko.github.io/ELITE-TRADE/logo.png" alt="ELITETRADE Logo" style="width:80px;height:80px;border-radius:16px;margin-bottom:12px;">
     <div class="auth-brand">ELITETRADE</div>
-    <div class="auth-tagline">Grow Your Wealth Daily</div>
+    <div class="auth-tagline">We Are Traders!!</div>
   </div>
   <div class="auth-card">
     <div class="auth-title">Welcome Back</div>
@@ -432,9 +432,9 @@ input[type="password"]{padding-right:46px;}
 <!-- REGISTER -->
 <div class="auth-page" id="register-page">
   <div class="auth-hero">
-    <div class="auth-logo">🌱</div>
+    <img src="https://tuvko.github.io/ELITE-TRADE/logo.png" alt="ELITETRADE Logo" style="width:80px;height:80px;border-radius:16px;margin-bottom:12px;">
     <div class="auth-brand">ELITETRADE</div>
-    <div class="auth-tagline">Start Earning Today</div>
+    <div class="auth-tagline">We Are Traders!!</div>
   </div>
   <div class="auth-card">
     <div class="auth-title">Create Account</div>
@@ -495,7 +495,7 @@ input[type="password"]{padding-right:46px;}
   <div class="topbar">
     <div class="topbar-left">
       <div class="menu-btn" onclick="openMenu()"><span></span><span></span><span></span></div>
-      <div class="brand"><img src="https://elitetrade.site/logo.png" alt="ELITETRADE" style="width:32px;height:32px;border-radius:8px;"><div class="brand-name">ELITETRADE</div></div>
+      <div class="brand"><img src="https://tuvko.github.io/ELITE-TRADE/logo.png" alt="ELITETRADE" style="width:32px;height:32px;border-radius:8px;"><div class="brand-name">ELITETRADE</div></div>
     </div>
     <div class="topbar-right">
       <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">🌙</button>
@@ -717,32 +717,24 @@ input[type="password"]{padding-right:46px;}
         <span class="profile-info-value" id="profile-since-new" style="display:block;padding:10px 14px;background:rgba(0,217,255,0.08);border:1px solid rgba(0,217,255,0.2);border-radius:10px;font-size:13px;">2025</span>
       </div>
 
-      <!-- Timeline Item 5: Total Invested -->
-      <div style="margin-bottom:20px;padding-left:50px;position:relative;">
-        <div style="position:absolute;left:15px;top:5px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:3px solid var(--accent);"></div>
-        <div style="font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:4px;">💰 Total Invested</div>
-        <span class="profile-stat-value" id="profile-stat-invested" style="display:block;padding:10px 14px;background:rgba(0,217,255,0.08);border:1px solid rgba(0,217,255,0.2);border-radius:10px;font-size:13px;color:var(--accent);">0</span>
-      </div>
-
-      <!-- Timeline Item 6: Total Earned -->
-      <div style="margin-bottom:20px;padding-left:50px;position:relative;">
-        <div style="position:absolute;left:15px;top:5px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:3px solid var(--accent);"></div>
-        <div style="font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:4px;">📈 Total Earned</div>
-        <span class="profile-stat-value" id="profile-stat-earned" style="display:block;padding:10px 14px;background:rgba(0,217,255,0.08);border:1px solid rgba(0,217,255,0.2);border-radius:10px;font-size:13px;color:#4CAF50;">0</span>
-      </div>
-
-      <!-- Timeline Item 7: Days Active -->
-      <div style="margin-bottom:20px;padding-left:50px;position:relative;">
-        <div style="position:absolute;left:15px;top:5px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:3px solid var(--accent);"></div>
-        <div style="font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:4px;">⏳ Days Active</div>
-        <span class="profile-stat-value" id="profile-stat-days" style="display:block;padding:10px 14px;background:rgba(0,217,255,0.08);border:1px solid rgba(0,217,255,0.2);border-radius:10px;font-size:13px;color:var(--accent);">0</span>
-      </div>
-
-      <!-- Timeline Item 8: Active Deposits -->
-      <div style="margin-bottom:32px;padding-left:50px;position:relative;">
-        <div style="position:absolute;left:15px;top:5px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:3px solid var(--accent);"></div>
-        <div style="font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:4px;">📊 Active Deposits</div>
-        <span class="profile-stat-value" id="profile-stat-deposits" style="display:block;padding:10px 14px;background:rgba(0,217,255,0.08);border:1px solid rgba(0,217,255,0.2);border-radius:10px;font-size:13px;color:var(--accent);">0</span>
+      <!-- 4 Account Boxes - Same as Dashboard -->
+      <div class="four-box-grid" style="margin-bottom:32px;">
+        <div class="info-box">
+          <div class="box-label">Committed</div>
+          <div class="box-value" id="profile-stat-committed">UGX 0</div>
+        </div>
+        <div class="info-box">
+          <div class="box-label">Funds</div>
+          <div class="box-value" id="profile-stat-funds">UGX 0</div>
+        </div>
+        <div class="info-box">
+          <div class="box-label">Income</div>
+          <div class="box-value" id="profile-stat-income">UGX 0</div>
+        </div>
+        <div class="info-box">
+          <div class="box-label">Withdrawn</div>
+          <div class="box-value" id="profile-stat-withdrawn">UGX 0</div>
+        </div>
       </div>
 
       <!-- Timeline Line Separator -->
@@ -1496,14 +1488,17 @@ function loadDashboard(){
   
   const deposits=u.deposits?Object.values(u.deposits):[];
   const totalInvested=deposits.reduce((sum,d)=>sum+(d.amount||0),0);
-  const totalEarned=u.profitEarned||0;
-  const daysActive=u.daysActive||0;
-  const activeDeposits=deposits.filter(d=>d.status!=='completed').length;
   
-  document.getElementById('profile-stat-invested').textContent=fmt(totalInvested);
-  document.getElementById('profile-stat-earned').textContent=fmt(totalEarned);
-  document.getElementById('profile-stat-days').textContent=daysActive;
-  document.getElementById('profile-stat-deposits').textContent=activeDeposits;
+  // Use new field names
+  const committed = u.investment || 0;
+  const funds = u.balance || 0;
+  const income = u.totalIncome || 0;
+  const withdrawn = u.totalWithdrawn || 0;
+  
+  document.getElementById('profile-stat-committed').textContent=fmt(committed);
+  document.getElementById('profile-stat-funds').textContent=fmt(funds);
+  document.getElementById('profile-stat-income').textContent=fmt(income);
+  document.getElementById('profile-stat-withdrawn').textContent=fmt(withdrawn);
   
   document.getElementById('with-phone-display').textContent=u.phone;
   const minWith=settingsData.minWithdraw||5000;
