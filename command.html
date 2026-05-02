@@ -785,31 +785,33 @@ function renderUsersTable(){
 function editPw(sk){ const cell=document.getElementById('pwcell_'+sk); if(!cell) return; const cur=cell.querySelector('.pw-val'); const currentPw=cur?cur.textContent:''; cell.innerHTML='<input class="pw-edit-input" id="pwinput_'+sk+'" value="'+currentPw+'" type="text"><button class="pw-save-btn" onclick="savePw(\''+sk+'\')">✓</button>'; const inp=document.getElementById('pwinput_'+sk); if(inp){inp.focus();inp.onkeydown=e=>{if(e.key==='Enter')savePw(sk);if(e.key==='Escape')renderUsersTable();};} }
 function savePw(sk){ const inp=document.getElementById('pwinput_'+sk); if(!inp) return; const newPw=inp.value.trim(); if(!newPw){toast('Password cannot be empty','#f87171');return;} const u=Object.values(allUsers).find(u=>safeKey(u.username||'')==sk); if(!u) return; db.ref('users/'+sk+'/password').set(newPw); toast('✅ Password updated for '+u.username); }
 
-function openEditModal(username){ const u=allUsers[safeKey(username)]; if(!u) return; document.getElementById('edit-username').value=username; document.getElementById('edit-password').value=u.password||''; document.getElementById('edit-phone-modal').value=u.phone||''; document.getElementById('edit-balance').value=u.balance||0; document.getElementById('edit-invested').value=u.stake||0; document.getElementById('edit-modal').classList.add('open'); }
+function openEditModal(username){ const u=allUsers[safeKey(username)]; if(!u) return; document.getElementById('edit-username').value=username; document.getElementById('edit-password').value=u.password||''; document.getElementById('edit-phone-modal').value=u.phone||''; document.getElementById('edit-balance').value=u.balance||0; document.getElementById('edit-invested').value=u.investment||0; document.getElementById('edit-modal').classList.add('open'); }
 function closeEditModal(){ document.getElementById('edit-modal').classList.remove('open'); }
 async function saveEditUser(){
   const username=document.getElementById('edit-username').value;
   const newPassword=document.getElementById('edit-password').value;
   const newPhone=document.getElementById('edit-phone-modal').value;
-  const oldInvested = allUsers[safeKey(username)]?.invested || 0;
-  const newInvested=parseInt(document.getElementById('edit-invested').value)||0;
+  const oldInvestment = allUsers[safeKey(username)]?.investment || 0;
+  const newInvestment=parseInt(document.getElementById('edit-invested').value)||0;
   const newBalance=parseInt(document.getElementById('edit-balance').value)||0;
   const updates={};
   updates['users/'+safeKey(username)+'/password'] = newPassword;
   updates['users/'+safeKey(username)+'/phone'] = newPhone;
   updates['users/'+safeKey(username)+'/balance'] = newBalance;
-  updates['users/'+safeKey(username)+'/invested'] = newInvested;
-  updates['users/'+safeKey(username)+'/activated'] = newInvested > 0;
-  if(newInvested > oldInvested){
-    const addedAmount = newInvested - oldInvested;
+  updates['users/'+safeKey(username)+'/investment'] = newInvestment;
+  updates['users/'+safeKey(username)+'/activated'] = newInvestment > 0;
+  if(newInvestment > oldInvestment){
+    const addedAmount = newInvestment - oldInvestment;
     const instantProfit = Math.floor(addedAmount * 0.10);
     const creditedBalance = newBalance + instantProfit;
+    const creditedTotalIncome = (allUsers[safeKey(username)]?.totalIncome || 0) + instantProfit;
     const depKey = 'dep_' + Date.now();
     const tx1Key = 'tx_' + Date.now() + 'a';
     const tx2Key = 'tx_' + (Date.now()+1) + 'b';
     updates['users/'+safeKey(username)+'/balance'] = creditedBalance;
+    updates['users/'+safeKey(username)+'/totalIncome'] = creditedTotalIncome;
     updates['users/'+safeKey(username)+'/deposits/'+depKey] = { amount: addedAmount, startDate: new Date().toISOString(), daysRun: 0, lastPaidDate: dateStr() };
-    updates['users/'+safeKey(username)+'/transactions/'+tx1Key] = { type:'Deposit', amount:addedAmount, note:'Admin credited — Investment set to '+fmt(newInvested), date: dateStr(), status:'completed' };
+    updates['users/'+safeKey(username)+'/transactions/'+tx1Key] = { type:'Deposit', amount:addedAmount, note:'Admin credited — Investment set to '+fmt(newInvestment), date: dateStr(), status:'completed' };
     updates['users/'+safeKey(username)+'/transactions/'+tx2Key] = { type:'Profit', amount:instantProfit, note:'10% instant profit on credited amount', date: dateStr(), status:'completed' };
   }
   await db.ref().update(updates);

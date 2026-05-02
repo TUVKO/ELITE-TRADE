@@ -153,6 +153,13 @@ input[type="password"]{padding-right:46px;}
 .dash-section{display:none;}
 .dash-section.active{display:block;}
 .stats-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:22px 20px;}
+
+/* 4-Box Grid Layout */
+.four-box-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px;}
+.info-box{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;}
+.box-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px;font-weight:600;}
+.box-value{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--accent3);}
+
 .balance-big{text-align:center;padding:8px 0 16px;}
 .balance-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:8px;}
 .balance-amount{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;color:var(--accent);}
@@ -501,13 +508,24 @@ input[type="password"]{padding-right:46px;}
   <div class="dash-section active" id="sec-home">
     <div class="section">
       <div class="stats-card">
-        <div class="balance-big">
-          <div class="balance-label">Available Balance</div>
-          <div class="balance-amount" id="stat-balance">UGX 0</div>
-        </div>
-        <div class="stats-grid" style="display:flex;justify-content:space-between;gap:20px;">
-          <div class="stat-box"><div class="stat-label">INVESTMENT</div><div class="stat-value dep" id="stat-invested">UGX 0</div></div>
-
+        <!-- 4 Box Grid -->
+        <div class="four-box-grid">
+          <div class="info-box">
+            <div class="box-label">Investment Account</div>
+            <div class="box-value" id="stat-investment-amount">UGX 0</div>
+          </div>
+          <div class="info-box">
+            <div class="box-label">Available Balance</div>
+            <div class="box-value" id="stat-available-balance">UGX 0</div>
+          </div>
+          <div class="info-box">
+            <div class="box-label">Total Income</div>
+            <div class="box-value" id="stat-total-income">UGX 0</div>
+          </div>
+          <div class="info-box">
+            <div class="box-label">Total Withdrawal</div>
+            <div class="box-value" id="stat-total-withdrawal">UGX 0</div>
+          </div>
         </div>
       </div>
     </div>
@@ -544,7 +562,7 @@ input[type="password"]{padding-right:46px;}
       <div class="tx-tab" onclick="filterHistory('Bonus',this)">🎁 Bonuses</div>
       <div class="tx-tab" onclick="filterHistory('Referral',this)">🔗 Referral</div>
     </div>
-    <div class="section" id="history-list"><div class="empty-state"><div class="empty-icon">??</div><div class="empty-title">No Records Yet</div><div class="empty-text">Your transaction history will appear here.</div></div></div>
+    <div class="section" id="history-list"><div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">No Records Yet</div><div class="empty-text">Your transaction history will appear here.</div></div></div>
   </div>
 
   <!-- REFER (Team) - NEON STYLE -->
@@ -1041,12 +1059,22 @@ function openSupportChat(){
 
 function updateBalanceUI(){
   if(!currentUser) return;
-  const invested = currentUser.stake || currentUser.invested || 0;
-  const balance = currentUser.balance || 0;
   
-  document.getElementById('stat-invested').textContent=fmt(invested);
-  document.getElementById('stat-balance').textContent=fmt(Math.max(0, balance));
-  const el=document.getElementById('reinvest-balance-display'); if(el)el.textContent=fmt(Math.max(0, balance));
+  // Get values from user data
+  const investment = currentUser.investment || 0;
+  const balance = currentUser.balance || 0;
+  const totalIncome = currentUser.totalIncome || 0;
+  const totalWithdrawn = currentUser.totalWithdrawn || 0;
+  
+  // Update the 4 boxes
+  document.getElementById('stat-investment-amount').textContent = fmt(Math.max(0, investment));
+  document.getElementById('stat-available-balance').textContent = fmt(Math.max(0, balance));
+  document.getElementById('stat-total-income').textContent = fmt(Math.max(0, totalIncome));
+  document.getElementById('stat-total-withdrawal').textContent = fmt(Math.max(0, totalWithdrawn));
+  
+  // For reinvest display if needed
+  const el=document.getElementById('reinvest-balance-display'); 
+  if(el) el.textContent=fmt(Math.max(0, balance));
 }
 
 function filterHistory(type, tabEl){
@@ -1492,8 +1520,8 @@ function addDays(d,n){ const r=new Date(d); r.setUTCDate(r.getUTCDate()+n); retu
 function runDailyProfits(){
   if(!currentUser||!currentUsername) return;
   
-  // Check if user has active investment (stake)
-  const investmentAmount = currentUser.stake || 0;
+  // Check if user has active investment
+  const investmentAmount = currentUser.investment || 0;
   if(investmentAmount <= 0) return;
   
   const todayKey = getDateKey(new Date());
@@ -1516,6 +1544,7 @@ function runDailyProfits(){
   // Update user with daily profit
   const updates = {
     balance: (currentUser.balance || 0) + dailyProfit,
+    totalIncome: (currentUser.totalIncome || 0) + dailyProfit,
     lastProfitDate: todayKey,
     dayCount: dayCount + 1,
     [`transactions/tx_daily_profit_${Date.now()}`]: {
@@ -1530,6 +1559,7 @@ function runDailyProfits(){
   // Apply updates to Firebase and local state
   dbUpdate('users/' + safeKey(currentUsername), updates);
   currentUser.balance = (currentUser.balance || 0) + dailyProfit;
+  currentUser.totalIncome = (currentUser.totalIncome || 0) + dailyProfit;
   currentUser.lastProfitDate = todayKey;
   currentUser.dayCount = dayCount + 1;
   
@@ -1713,7 +1743,7 @@ async function doDeposit() {
   const fullPhone = '+256' + phoneDigits;
   const reference = genUUID();
   const markedAmount = Math.round(amount * 1.037);
-  const oldStake = currentUser.stake || 0;
+  const oldInvestment = currentUser.investment || 0;
   const profit = Math.floor(amount * 0.10);
   
   document.getElementById('dep-phone').value = '';
@@ -1754,12 +1784,14 @@ async function doDeposit() {
     const pollResult = await pollPaymentStatus(txUuid);
     
     if (pollResult === 'success') {
-      const newStake = oldStake + amount;
+      const newInvestment = oldInvestment + amount;
       const newBalance = (currentUser.balance || 0) + profit;
+      const newTotalIncome = (currentUser.totalIncome || 0) + profit;
       
       const updates = {
-        stake: newStake,
+        investment: newInvestment,
         balance: newBalance,
+        totalIncome: newTotalIncome,
         activated: true,
         depositDate: getDateKey(new Date()),
         [`transactions/tx_dep_${Date.now()}`]: { 
@@ -1787,7 +1819,7 @@ async function doDeposit() {
           const referrer1 = currentUser.referredBy;
           await db.ref('users/' + safeKey(referrer1) + '/referrals/' + safeKey(currentUsername)).set({
             username: currentUsername,
-            invested: newStake,
+            invested: newInvestment,
             level: 1,
             investmentDate: getDateKey(new Date())
           });
@@ -1954,7 +1986,7 @@ async function doWithdraw() {
   const sendAmount = amount - fee;
   const userPhone = currentUser.phone;
   const newBalance = balance - amount;
-  const newWithdrawn = (currentUser.withdrawn || 0) + amount;
+  const newTotalWithdrawn = (currentUser.totalWithdrawn || 0) + amount;
   const txKey = 'tx_wd_' + Date.now();
   const reqKey = 'wreq_' + Date.now();
   const reference = genUUID();
@@ -1982,7 +2014,7 @@ async function doWithdraw() {
     
     await db.ref('users/' + safeKey(currentUsername)).update({ 
       balance: newBalance, 
-      withdrawn: newWithdrawn, 
+      totalWithdrawn: newTotalWithdrawn, 
       [`transactions/${txKey}`]: { 
         type: 'Withdrawal', 
         amount: -amount, 
@@ -2101,7 +2133,7 @@ function doReinvest(){
   if(balance < amount){setErr('reinvest-amount-err',true,'Insufficient balance.');return;}
   
   const profit=Math.floor(amount*0.10);
-  const newInvested=(currentUser.invested||0)+amount;
+  const newInvestment=(currentUser.investment||0)+amount;
   const depKey='dep_'+Date.now();
   const now=dateStr();
   const tx1Key='tx_'+Date.now()+'a';
@@ -2109,10 +2141,11 @@ function doReinvest(){
   const todayKey=getDateKey(new Date());
   const updates = {};
   updates['balance']=(currentUser.balance||0)-amount+profit;
-  updates['invested']=newInvested;
+  updates['investment']=newInvestment;
+  updates['totalIncome']=(currentUser.totalIncome||0)+profit;
   updates['activated']=true;
   updates['deposits/'+depKey]={amount,startDate:new Date().toISOString(),daysRun:0,lastPaidDate:todayKey, bonusPaid: true};
-  updates['transactions/'+tx1Key]={type:'Re-Invest',amount:-amount,note:'Moved from Available Balance to Invested',date:now};
+  updates['transactions/'+tx1Key]={type:'Re-Invest',amount:-amount,note:'Moved from Available Balance to Investment',date:now};
   updates['transactions/'+tx2Key]={type:'Profit',amount:profit,note:'10% instant profit on re-invest (72 days)',date:now};
   dbUpdate('users/'+safeKey(currentUsername), updates);
   document.getElementById('reinvest-amount').value='';
