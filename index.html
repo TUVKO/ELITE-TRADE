@@ -289,6 +289,35 @@ input[type="password"]{padding-right:46px;}
 .tx-tab{flex-shrink:0;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:7px 14px;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap;}
 .tx-tab.active{background:var(--surface3);border-color:var(--accent);color:var(--accent);}
 
+/* Timeline Styles */
+.timeline-container{padding:16px;position:relative;}
+.timeline-item{display:flex;gap:16px;margin-bottom:24px;position:relative;cursor:pointer;padding:12px;border-radius:12px;transition:background 0.2s;padding-left:24px;}
+.timeline-item:hover{background:var(--surface2);}
+.timeline-item::before{content:'';position:absolute;left:7px;top:40px;bottom:-30px;width:2px;background:linear-gradient(to bottom, var(--accent), transparent);}
+.timeline-item:last-child::before{display:none;}
+.timeline-dot{width:16px;height:16px;background:var(--accent);border-radius:50%;position:absolute;left:-8px;top:12px;border:3px solid var(--bg);}
+.timeline-content{flex:1;}
+.timeline-date{font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;font-weight:600;letter-spacing:0.5px;}
+.timeline-desc{font-size:13px;color:var(--text);margin-bottom:6px;font-weight:600;}
+.timeline-amount{font-size:14px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+
+/* Transaction Modal */
+.tx-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:flex-end;z-index:999;padding:0;}
+.tx-modal-content{width:100%;max-width:500px;background:var(--surface);border-radius:24px 24px 0 0;padding:24px;max-height:80vh;overflow-y:auto;}
+.tx-modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.tx-modal-title{font-size:18px;font-weight:700;color:var(--accent);}
+.tx-modal-close{background:none;border:none;font-size:24px;color:var(--muted);cursor:pointer;padding:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;}
+.tx-modal-close:hover{color:var(--text);}
+.tx-modal-body{margin-bottom:20px;}
+.tx-detail-row{display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--border);}
+.tx-detail-row:last-child{border-bottom:none;}
+.tx-detail-label{font-size:12px;text-transform:uppercase;color:var(--muted);font-weight:600;letter-spacing:0.5px;}
+.tx-detail-value{font-size:13px;color:var(--text);text-align:right;word-break:break-word;}
+.tx-modal-footer{display:flex;gap:10px;}
+.tx-modal-btn{flex:1;background:var(--accent);border:none;border-radius:12px;padding:14px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;color:#fff;cursor:pointer;}
+.tx-modal-btn:active{transform:scale(0.98);}
+
+
 /* Referral Page - Pure Green */
 .ref-main-card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
 .ref-total-card{background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:20px;text-align:center;margin-bottom:24px;}
@@ -477,9 +506,9 @@ input[type="password"]{padding-right:46px;}
 
   <!-- TNS (History) -->
   <div class="dash-section" id="sec-history">
-    <div class="inner-header"><span style="font-size:22px">📋</span><div><div class="inner-title">TNS</div><div class="inner-sub">All your transactions</div></div></div>
+    <div class="inner-header"><span style="font-size:22px">📋</span><div><div class="inner-title">Activity</div><div class="inner-sub">All your transactions</div></div></div>
     <div class="tx-filter-tabs">
-      <div class="tx-tab active" onclick="filterHistory('Deposit',this)">💳 Deposits</div>
+      <div class="tx-tab active" onclick="filterHistory('Deposit',this)">💳 Credit</div>
       <div class="tx-tab" onclick="filterHistory('Withdrawal',this)">💸 Withdrawals</div>
       <div class="tx-tab" onclick="filterHistory('Profit',this)">📈 Profits</div>
       <div class="tx-tab" onclick="filterHistory('Bonus',this)">🎁 Bonuses</div>
@@ -687,7 +716,7 @@ input[type="password"]{padding-right:46px;}
 
   <nav class="bottom-nav">
     <div class="nav-item active" onclick="switchTab('home')"><span class="nav-icon">🏠</span><span class="nav-label">DASHBOARD</span></div>
-    <div class="nav-item" onclick="switchTab('history')"><span class="nav-icon">📋</span><span class="nav-label">TNS</span></div>
+    <div class="nav-item" onclick="switchTab('history')"><span class="nav-icon">📋</span><span class="nav-label">Activity</span></div>
     <div class="nav-item" onclick="switchTab('team')"><span class="nav-icon">👥</span><span class="nav-label">REFER</span></div>
     <div class="nav-item" onclick="switchTab('plan')"><span class="nav-icon">📊</span><span class="nav-label">TABLE</span></div>
     <div class="nav-item" onclick="switchTab('profile')"><span class="nav-icon">👤</span><span class="nav-label">MYSELF</span></div>
@@ -944,16 +973,90 @@ function renderHistory(){
   const txs=allTxs.filter(tx=>tx.type===currentHistoryFilter);
   if(!txs.length){ wrap.innerHTML='<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">No '+currentHistoryFilter+' Records</div><div class="empty-text">Your '+currentHistoryFilter.toLowerCase()+' history will appear here.</div></div>'; return; }
   const icons={Deposit:'💳',Withdrawal:'💸',Bonus:'🎁',Referral:'🔗',Profit:'📈','Re-Invest':'🔄'};
-  wrap.innerHTML='<div class="tx-cards-wrapper">'+txs.map((tx,idx)=>{
+  
+  // Timeline design HTML
+  wrap.innerHTML='<div class="timeline-container">'+txs.map((tx,idx)=>{
     const pos=tx.amount>=0; 
     const isPending=tx.status==='pending';
     const isFailed=tx.status==='failed';
     const isCompleted=tx.status==='completed';
     const timeStr=tx.date||'';
     const statusBadge=isPending?'⏳ Pending':isFailed?'❌ Failed':'✅ Completed';
-    const amountColor=isPending?'#D4AF37':isFailed?'#f87171':'#4ade80';
-    return `<div class="tx-card"><div class="tx-card-left"><div class="tx-card-icon">${icons[tx.type]||'💰'}</div><div class="tx-card-info"><div class="tx-card-type">${tx.type}</div><div class="tx-card-desc">${tx.note||''}</div><div class="tx-card-time">${timeStr}</div></div></div><div class="tx-card-right"><div class="tx-card-amount" style="color:${amountColor}">${isPending?'⏳':isFailed?'':pos?'+'+fmt(tx.amount):fmt(tx.amount)}</div><div class="tx-card-status">${statusBadge}</div></div></div>`;
+    const amountColor=isPending?'#FFB800':isFailed?'#FF4757':'#00D9FF';
+    const txData = JSON.stringify(tx).replace(/"/g, '&quot;');
+    return `
+      <div class="timeline-item" onclick="showTransactionDetail('${txData}')">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-date">${timeStr}</div>
+          <div class="timeline-desc">${tx.type} - ${tx.note||''}</div>
+          <div class="timeline-amount" style="color:${amountColor}">${isPending?'⏳':isFailed?'':pos?'+':'-'}${fmt(Math.abs(tx.amount))}</div>
+        </div>
+      </div>
+    `;
   }).join('')+'</div>';
+}
+
+function showTransactionDetail(txData){
+  try{
+    const tx = JSON.parse(txData.replace(/&quot;/g, '"'));
+    const pos=tx.amount>=0;
+    const isPending=tx.status==='pending';
+    const isFailed=tx.status==='failed';
+    const statusBadge=isPending?'⏳ Pending':isFailed?'❌ Failed':'✅ Completed';
+    const amountColor=isPending?'#FFB800':isFailed?'#FF4757':'#00D9FF';
+    
+    const modal = `
+      <div class="tx-modal-overlay" onclick="closeTxModal()">
+        <div class="tx-modal-content" onclick="event.stopPropagation()">
+          <div class="tx-modal-header">
+            <div class="tx-modal-title">${tx.type} Details</div>
+            <button class="tx-modal-close" onclick="closeTxModal()">✕</button>
+          </div>
+          <div class="tx-modal-body">
+            <div class="tx-detail-row">
+              <div class="tx-detail-label">Type</div>
+              <div class="tx-detail-value">${tx.type}</div>
+            </div>
+            <div class="tx-detail-row">
+              <div class="tx-detail-label">Amount</div>
+              <div class="tx-detail-value" style="color:${amountColor};font-weight:700;font-size:16px;">${pos?'+':'-'}${fmt(Math.abs(tx.amount))}</div>
+            </div>
+            <div class="tx-detail-row">
+              <div class="tx-detail-label">Date</div>
+              <div class="tx-detail-value">${tx.date||'N/A'}</div>
+            </div>
+            <div class="tx-detail-row">
+              <div class="tx-detail-label">Status</div>
+              <div class="tx-detail-value" style="padding:4px 10px;background:var(--surface2);border-radius:6px;display:inline-block;color:${amountColor};">${statusBadge}</div>
+            </div>
+            <div class="tx-detail-row">
+              <div class="tx-detail-label">Note</div>
+              <div class="tx-detail-value">${tx.note||'No additional notes'}</div>
+            </div>
+          </div>
+          <div class="tx-modal-footer">
+            <button class="tx-modal-btn" onclick="closeTxModal()">Close</button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    const existing = document.getElementById('tx-detail-modal');
+    if(existing) existing.remove();
+    
+    const div = document.createElement('div');
+    div.id = 'tx-detail-modal';
+    div.innerHTML = modal;
+    document.body.appendChild(div);
+  }catch(e){
+    console.error('Error showing transaction detail:', e);
+  }
+}
+
+function closeTxModal(){
+  const modal = document.getElementById('tx-detail-modal');
+  if(modal) modal.remove();
 }
 
 function renderTeam(){
