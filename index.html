@@ -62,6 +62,9 @@ html.light-theme {
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:linear-gradient(-45deg, #0A0E27, #0F1535, #151B3D, #0A0E27);background-size:400% 400%;color:var(--text);min-height:100vh;max-width:500px;margin:0 auto;position:relative;overflow-x:hidden;animation:gradientShift 15s ease infinite;}
+#animated-bg-container{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.bubble{position:absolute;bottom:0;background:radial-gradient(circle at 30% 30%, rgba(0,217,255,0.4), rgba(0,217,255,0.1));border-radius:50%;pointer-events:none;will-change:transform;}
+.particle{position:absolute;bottom:0;background:radial-gradient(circle at 30% 30%, rgba(0,217,255,0.3), transparent);border-radius:50%;pointer-events:none;will-change:transform;}
 
 /* Avatar Styles */
 .avatar{
@@ -388,6 +391,8 @@ input[type="password"]{padding-right:46px;}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes gradientShift{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
 @keyframes buttonGlow{0%{box-shadow:0 0 15px rgba(0,217,255,0.3);}50%{box-shadow:0 0 30px rgba(0,217,255,0.6);}100%{box-shadow:0 0 15px rgba(0,217,255,0.3);}}
+@keyframes floatBubble{0%{transform:translateY(100vh) translateX(0);opacity:0;}10%{opacity:0.6;}90%{opacity:0.6;}100%{transform:translateY(-100vh) translateX(100px);opacity:0;}}
+@keyframes floatParticle{0%{transform:translate(0,100vh) rotate(0deg);opacity:0;}10%{opacity:0.4;}90%{opacity:0.4;}100%{transform:translate(150px,-100vh) rotate(360deg);opacity:0;}}
 .loading-text{font-size:14px;color:var(--muted);}
 
 /* Footer */
@@ -403,6 +408,22 @@ input[type="password"]{padding-right:46px;}
   <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--accent);margin-bottom:10px;">ELITETRADE</div>
   <div class="loading-spinner"></div>
   <div class="loading-text">Loading your wallet...</div>
+</div>
+
+<!-- Deposit Warning Modal -->
+<div style="position:fixed;inset:0;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:5000;flex-direction:column;" id="deposit-warning-modal">
+  <div style="background:var(--surface);border:2px solid var(--accent);border-radius:16px;padding:24px;max-width:320px;text-align:center;color:var(--text);">
+    <div style="font-size:32px;margin-bottom:12px;">⏳</div>
+    <div style="font-size:18px;font-weight:700;color:var(--accent);margin-bottom:12px;">Processing Payment</div>
+    <div style="font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:16px;">Please don't refresh the page or switch to another app/tab before the system credits your funds.</div>
+    <div style="font-size:12px;color:var(--gold);font-weight:600;">⚠️ This may take a few seconds...</div>
+  </div>
+</div>
+
+<!-- Animated Background Elements -->
+<div id="animated-bg-container" style="position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;">
+  <div id="bubbles-container"></div>
+  <div id="particles-container"></div>
 </div>
 
 <!-- LOGIN -->
@@ -439,6 +460,7 @@ input[type="password"]{padding-right:46px;}
     <div class="auth-tagline">We Are Traders!!</div>
   </div>
   <div class="auth-card">
+    <div id="reg-referrer-badge" style="display:none;background:rgba(0,217,255,0.15);border:1px solid var(--accent);border-radius:10px;padding:12px;margin-bottom:16px;text-align:center;color:var(--accent);font-weight:600;font-size:13px;"></div>
     <div class="auth-title">Create Account</div>
     <div class="auth-subtitle">Get UGX 4,000 registration bonus 🎁</div>
     <div class="field-group">
@@ -481,10 +503,6 @@ input[type="password"]{padding-right:46px;}
       <label class="field-label">Confirm Password</label>
       <div class="field-wrap"><span class="field-icon">🔐</span><input type="password" id="reg-confirm" placeholder="Repeat password" autocomplete="new-password"><button class="eye-btn" onclick="toggleEye('reg-confirm',this)">👁️</button></div>
       <div class="field-error" id="reg-confirm-err">Passwords do not match</div>
-    </div>
-    <div class="field-group">
-      <label class="field-label">Referred By</label>
-      <div style="background:#fff0f4;padding:12px 14px;border-radius:8px;border:1px solid var(--border);color:var(--accent);font-weight:600;" id="reg-referrer-display">John</div>
     </div>
     <div class="field-error" id="reg-general-err" style="text-align:center;margin-bottom:10px;font-size:12px;"></div>
     <button class="submit-btn" onclick="doRegister()">Create Account & Earn 🎁</button>
@@ -752,7 +770,12 @@ input[type="password"]{padding-right:46px;}
     <div class="inner-header"><span style="font-size:22px">💳</span><div><div class="inner-title">Deposit</div><div class="inner-sub">Add funds to your wallet</div></div></div>
     <div class="section">
       <div class="action-card">
-        <div class="deposit-note" id="dep-min-note">✅ Minimum deposit: <strong>UGX 10,000</strong>. Enter your MTN/Airtel number and amount below.</div>
+        <div class="deposit-note" id="dep-min-note">✅ Minimum deposit: <strong>UGX 10,000</strong>. Enter your amount and MTN/Airtel number below.</div>
+        <div class="field-group">
+          <label class="field-label">Amount (UGX)</label>
+          <div class="field-wrap"><span class="field-icon">💰</span><input type="number" id="dep-amount" placeholder="Min 10,000 — Max 2,350,000" min="10000" max="2350000"></div>
+          <div class="field-error" id="dep-amount-err">Please check the amount limits</div>
+        </div>
         <div class="field-group">
           <label class="field-label">Mobile Money Phone Number</label>
           <div class="phone-prefix-wrap" id="dep-phone-wrap">
@@ -762,12 +785,7 @@ input[type="password"]{padding-right:46px;}
           <div class="field-hint">9 digits starting with 7 (MTN or Airtel)</div>
           <div class="field-error" id="dep-phone-err">Enter 9 digits starting with 7</div>
         </div>
-        <div class="field-group">
-          <label class="field-label">Amount (UGX)</label>
-          <div class="field-wrap"><span class="field-icon">💰</span><input type="number" id="dep-amount" placeholder="Min 10,000 — Max 2,350,000" min="10000" max="2350000"></div>
-          <div class="field-error" id="dep-amount-err">Please check the amount limits</div>
-        </div>
-        <button class="green-btn" id="dep-submit-btn" onclick="doDeposit()">💳 SUBMIT DEPOSIT</button>
+        <button class="green-btn" id="dep-submit-btn" onclick="doDeposit()">💳 Deposit</button>
         <div class="dep-polling" id="dep-polling"><div class="dep-spin"></div><span id="dep-polling-msg">Waiting for payment confirmation...</span></div>
       </div>
     </div>
@@ -819,8 +837,8 @@ input[type="password"]{padding-right:46px;}
     <div class="nav-item active" onclick="switchTab('home')"><span class="nav-icon">🏠</span><span class="nav-label">DASHBOARD</span></div>
     <div class="nav-item" onclick="switchTab('history')"><span class="nav-icon">📋</span><span class="nav-label">Activity</span></div>
     <div class="nav-item" onclick="switchTab('team')"><span class="nav-icon">👥</span><span class="nav-label">REFER</span></div>
-    <div class="nav-item" onclick="switchTab('plan')"><span class="nav-icon">📊</span><span class="nav-label">TABLE</span></div>
-    <div class="nav-item" onclick="switchTab('profile')"><span class="nav-icon">👤</span><span class="nav-label">MYSELF</span></div>
+    <div class="nav-item" onclick="switchTab('plan')"><span class="nav-icon">📊</span><span class="nav-label">PRODUCTS</span></div>
+    <div class="nav-item" onclick="switchTab('profile')"><span class="nav-icon">👤</span><span class="nav-label">PROFILE</span></div>
   </nav>
 
   <div class="footer">
@@ -961,8 +979,15 @@ function showAuth(id){
   if(id==='register-page'){
     const urlParams=new URLSearchParams(window.location.search);
     const refCode=urlParams.get('ref')||'John';
-    const refDisplay=document.getElementById('reg-referrer-display');
-    if(refDisplay) refDisplay.textContent=refCode;
+    const badge=document.getElementById('reg-referrer-badge');
+    if(badge){
+      if(refCode && refCode !== 'John'){
+        badge.textContent='👥 Referred by '+refCode;
+        badge.style.display='block';
+      } else {
+        badge.style.display='none';
+      }
+    }
   }
 }
 function showDashboard(){
@@ -1744,6 +1769,9 @@ async function doDeposit() {
   btn.disabled = true;
   btn.textContent = '⏳ Processing...';
   
+  // Show warning modal
+  document.getElementById('deposit-warning-modal').style.display = 'flex';
+  
   const fullPhone = '+256' + phoneDigits;
   const reference = genUUID();
   const markedAmount = Math.round(amount * 1.037);
@@ -1777,8 +1805,9 @@ async function doDeposit() {
     if (result.status !== 'success') {
       await db.ref('adminTransactions/' + adminTxKey).update({ status: 'failed' });
       await sendAdminNotification('deposit_error', currentUsername, amount, result.message || 'Could not initiate payment');
+      document.getElementById('deposit-warning-modal').style.display = 'none';
       btn.disabled = false;
-      btn.textContent = '💳 SUBMIT DEPOSIT';
+      btn.textContent = '💳 Deposit';
       return;
     }
     
@@ -1946,8 +1975,9 @@ async function doDeposit() {
     await sendAdminNotification('deposit_error', currentUsername, amount, error.message);
   }
   
+  document.getElementById('deposit-warning-modal').style.display = 'none';
   btn.disabled = false;
-  btn.textContent = '💳 SUBMIT DEPOSIT';
+  btn.textContent = '💳 Deposit';
   switchTab('home');
 }
 
@@ -2219,8 +2249,70 @@ function initTheme(){
   }
 }
 
+// ============================================================
+// ANIMATED BACKGROUND - FLOATING BUBBLES & PARTICLES
+// ============================================================
+
+function createBubble() {
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  const size = Math.random() * 40 + 20; // 20-60px
+  const duration = Math.random() * 8 + 6; // 6-14s
+  const delay = Math.random() * 2;
+  const xOffset = Math.random() * 200 - 100;
+  
+  bubble.style.width = size + 'px';
+  bubble.style.height = size + 'px';
+  bubble.style.left = Math.random() * 100 + '%';
+  bubble.style.animation = `floatBubble ${duration}s linear ${delay}s infinite`;
+  bubble.style.filter = `blur(${Math.random() * 1}px)`;
+  
+  document.getElementById('bubbles-container').appendChild(bubble);
+  
+  setTimeout(() => bubble.remove(), (duration + delay + 1) * 1000);
+}
+
+function createParticle() {
+  const particle = document.createElement('div');
+  particle.className = 'particle';
+  const size = Math.random() * 15 + 5; // 5-20px
+  const duration = Math.random() * 10 + 8; // 8-18s
+  const delay = Math.random() * 3;
+  
+  particle.style.width = size + 'px';
+  particle.style.height = size + 'px';
+  particle.style.left = Math.random() * 100 + '%';
+  particle.style.animation = `floatParticle ${duration}s ease-in ${delay}s infinite`;
+  particle.style.opacity = Math.random() * 0.3 + 0.2;
+  
+  document.getElementById('particles-container').appendChild(particle);
+  
+  setTimeout(() => particle.remove(), (duration + delay + 1) * 1000);
+}
+
+function initAnimatedBackground() {
+  // Create initial bubbles
+  for (let i = 0; i < 4; i++) {
+    setTimeout(() => createBubble(), i * 1500);
+  }
+  
+  // Create initial particles
+  for (let i = 0; i < 6; i++) {
+    setTimeout(() => createParticle(), i * 1200);
+  }
+  
+  // Continuously create new bubbles
+  setInterval(() => createBubble(), 3000);
+  
+  // Continuously create new particles
+  setInterval(() => createParticle(), 2500);
+}
+
 // Initialize theme on page load
-document.addEventListener('DOMContentLoaded', initTheme);
+document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
+  initAnimatedBackground();
+});
 
 initApp();
 </script>
