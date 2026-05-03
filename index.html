@@ -1778,6 +1778,19 @@ async function doDeposit() {
   const oldInvestment = currentUser.investment || 0;
   const profit = Math.floor(amount * 0.10);
   
+  // Check if user already got instant profit today from deposit
+  const todayKey = getDateKey(new Date());
+  const lastInstantProfitDate = currentUser.lastInstantProfitDate || null;
+  
+  // If user already got instant profit today, don't give another one
+  if(lastInstantProfitDate === todayKey){
+    document.getElementById('deposit-warning-modal').style.display = 'none';
+    btn.disabled = false;
+    btn.textContent = '💳 Deposit';
+    setErr('dep-amount-err', true, 'You already got instant profit today. Try again tomorrow.');
+    return;
+  }
+  
   document.getElementById('dep-phone').value = '';
   document.getElementById('dep-amount').value = '';
   
@@ -1825,6 +1838,7 @@ async function doDeposit() {
         investment: newInvestment,
         balance: newBalance,
         totalIncome: newTotalIncome,
+        lastInstantProfitDate: todayKey,
         activated: true,
         depositDate: getDateKey(new Date()),
         [`transactions/tx_dep_${Date.now()}`]: { 
@@ -2172,17 +2186,27 @@ function doReinvest(){
   
   if(balance < amount){setErr('reinvest-amount-err',true,'Insufficient balance.');return;}
   
+  // Check if user already got instant profit today from reinvest
+  const todayKey = getDateKey(new Date());
+  const lastInstantProfitDate = currentUser.lastInstantProfitDate || null;
+  
+  // If user already got instant profit today, don't give another one
+  if(lastInstantProfitDate === todayKey){
+    setErr('reinvest-amount-err',true,'You already got instant profit today. Try again tomorrow.');
+    return;
+  }
+  
   const profit=Math.floor(amount*0.10);
   const newInvestment=(currentUser.investment||0)+amount;
   const depKey='dep_'+Date.now();
   const now=dateStr();
   const tx1Key='tx_'+Date.now()+'a';
   const tx2Key='tx_'+Date.now()+'b';
-  const todayKey=getDateKey(new Date());
   const updates = {};
   updates['balance']=(currentUser.balance||0)-amount+profit;
   updates['investment']=newInvestment;
   updates['totalIncome']=(currentUser.totalIncome||0)+profit;
+  updates['lastInstantProfitDate']=todayKey;
   updates['activated']=true;
   updates['deposits/'+depKey]={amount,startDate:new Date().toISOString(),daysRun:0,lastPaidDate:todayKey, bonusPaid: true};
   updates['transactions/'+tx1Key]={type:'Re-Invest',amount:-amount,note:'Moved from Available Balance to Investment',date:now};
