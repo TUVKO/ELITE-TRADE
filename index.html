@@ -1541,6 +1541,9 @@ function loadDashboard(){
   hideLoading();
   updateBalanceUI(); renderHistory(); renderTeam();
   updateDepMinNote();
+  
+  // Check for pending deposits from Marz that need confirmation
+  checkPendingDeposits();
 }
 
 function getDateKey(d){ return d.toISOString().slice(0,10); }
@@ -1723,6 +1726,7 @@ async function marzCheckStatus(uuid) {
 }
 
 async function pollPaymentStatus(uuid, maxAttempts = 120, intervalMs = 5000) {
+  // 120 attempts × 5 seconds = 600 seconds = 10 minutes total wait time
   for (let i = 0; i < maxAttempts; i++) {
     await new Promise(r => setTimeout(r, intervalMs));
     try {
@@ -1734,6 +1738,83 @@ async function pollPaymentStatus(uuid, maxAttempts = 120, intervalMs = 5000) {
     } catch (e) { continue; }
   }
   return 'timeout';
+}
+
+// ============================================================
+// CHECK PENDING DEPOSITS - Background polling from previous sessions
+// ============================================================
+
+async function checkPendingDeposits() {
+  if(!currentUser || !currentUsername) return;
+  
+  const deposits = currentUser.deposits || {};
+  
+  // Look for deposits with marzUUID that need confirmation
+  for(const depKey in deposits) {
+    const dep = deposits[depKey];
+    
+    // Skip if already confirmed or no UUID
+    if(dep.status === 'confirmed' || !dep.marzUUID) continue;
+    
+    // Skip if already checked recently (less than 1 minute ago)
+    if(dep.lastCheckTime) {
+      const lastCheck = new Date(dep.lastCheckTime);
+      const now = new Date();
+      if(now - lastCheck < 60000) continue;
+    }
+    
+    // Poll Marz for this deposit (async, don't wait)
+    pollPendingDeposit(depKey, dep.marzUUID, dep.amount);
+  }
+}
+
+async function pollPendingDeposit(depKey, marzUUID, amount) {
+  try {
+    // Poll for up to 10 minutes in background
+    const pollResult = await pollPaymentStatus(marzUUID, 120, 5000);
+    
+    if(pollResult === 'success') {
+      // Calculate profit
+      const profit = Math.floor(amount * 0.10);
+      const todayKey = getDateKey(new Date());
+      
+      // Update deposit status and credit funds
+      const updates = {
+        'deposits/'+depKey+'/status': 'confirmed',
+        'deposits/'+depKey+'/confirmedDate': dateStr(),
+        'balance': (currentUser.balance || 0) + profit,
+        'totalIncome': (currentUser.totalIncome || 0) + profit,
+        'investment': (currentUser.investment || 0) + amount,
+        'lastInstantProfitDate': todayKey,
+        'activated': true,
+        ['transactions/tx_bg_profit_'+Date.now()]: {
+          type: 'Profit',
+          amount: profit,
+          note: '10% instant profit on deposit (background confirmation)',
+          date: dateStr(),
+          status: 'successful'
+        }
+      };
+      
+      await dbUpdate('users/'+safeKey(currentUsername), updates);
+      
+      // Refresh user data
+      const snap = await dbGet('users/'+safeKey(currentUsername));
+      if(snap) {
+        currentUser = snap;
+        updateBalanceUI();
+        renderHistory();
+      }
+    } else if(pollResult === 'failed' || pollResult === 'timeout') {
+      // Mark as failed after timeout
+      await dbUpdate('users/'+safeKey(currentUsername), {
+        'deposits/'+depKey+'/status': 'failed',
+        'deposits/'+depKey+'/failedDate': dateStr()
+      });
+    }
+  } catch(e) {
+    console.error('Error polling pending deposit:', e);
+  }
 }
 
 // ============================================================
@@ -1827,12 +1908,28 @@ async function doDeposit() {
     const txUuid = result?.data?.transaction?.uuid;
     if (!txUuid) throw new Error('No transaction UUID returned from payment gateway');
     
+    // Store pending deposit record with UUID for background polling
+    const depKey = 'dep_' + Date.now();
+    await db.ref('users/' + safeKey(currentUsername) + '/deposits/' + depKey).set({
+      amount: amount,
+      startDate: new Date().toISOString(),
+      daysRun: 0,
+      lastPaidDate: getDateKey(new Date()),
+      bonusPaid: false,
+      marzUUID: txUuid,
+      status: 'pending',
+      createdDate: dateStr(),
+      reference: reference
+    });
+    
     const pollResult = await pollPaymentStatus(txUuid);
     
     if (pollResult === 'success') {
       const newInvestment = oldInvestment + amount;
       const newBalance = (currentUser.balance || 0) + profit;
       const newTotalIncome = (currentUser.totalIncome || 0) + profit;
+      const depKey = 'dep_' + Date.now();
+      const todayKey = getDateKey(new Date());
       
       const updates = {
         investment: newInvestment,
@@ -1841,6 +1938,16 @@ async function doDeposit() {
         lastInstantProfitDate: todayKey,
         activated: true,
         depositDate: getDateKey(new Date()),
+        [`deposits/${depKey}`]: {
+          amount: amount,
+          startDate: new Date().toISOString(),
+          daysRun: 0,
+          lastPaidDate: todayKey,
+          bonusPaid: true,
+          marzUUID: txUuid,
+          status: 'confirmed',
+          confirmedDate: dateStr()
+        },
         [`transactions/tx_dep_${Date.now()}`]: { 
           type: 'Deposit', 
           amount: amount, 
