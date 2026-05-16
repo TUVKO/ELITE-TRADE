@@ -1017,8 +1017,137 @@ function initThemeAdmin(){
 // Initialize theme on page load
 document.addEventListener('DOMContentLoaded', initThemeAdmin);
 
+// ============================================================
+// AUTO-DELETE TRANSACTION HISTORY (Older than 20 hours)
+// ============================================================
+
+let adminTransactionCleanupInterval = null;
+
+function startAdminTransactionCleanup() {
+  // Run cleanup every 30 minutes to check for old transactions
+  if(adminTransactionCleanupInterval) clearInterval(adminTransactionCleanupInterval);
+  
+  adminTransactionCleanupInterval = setInterval(() => {
+    cleanupOldAdminTransactions();
+  }, 30 * 60 * 1000); // 30 minutes
+  
+  // Run once immediately on startup
+  cleanupOldAdminTransactions();
+}
+
+async function cleanupOldAdminTransactions() {
+  try {
+    // Delete old user transactions from all user accounts
+    const usersRef = db.ref('users');
+    const usersSnapshot = await usersRef.get();
+    
+    if(usersSnapshot.exists()) {
+      const users = usersSnapshot.val();
+      const now = Date.now();
+      const twentyHoursMs = 20 * 60 * 60 * 1000; // 20 hours in milliseconds
+      const cutoffTime = now - twentyHoursMs;
+      
+      let deletedCount = 0;
+      
+      for(const username in users) {
+        const user = users[username];
+        if(!user.transactions || typeof user.transactions !== 'object') continue;
+        
+        const updates = {};
+        let hasChanges = false;
+        
+        for(const txKey in user.transactions) {
+          const tx = user.transactions[txKey];
+          
+          // Try to parse transaction date
+          let txTime = 0;
+          
+          if(tx.date) {
+            try {
+              const dateObj = new Date(tx.date);
+              txTime = dateObj.getTime();
+            } catch(e) {
+              txTime = 0;
+            }
+          }
+          
+          // If transaction is older than 20 hours, mark for deletion
+          if(txTime > 0 && txTime < cutoffTime) {
+            updates[`transactions/${txKey}`] = null;
+            hasChanges = true;
+            deletedCount++;
+          }
+        }
+        
+        // Apply deletions for this user
+        if(hasChanges) {
+          try {
+            await db.ref('users/' + safeKey(username)).update(updates);
+          } catch(e) {
+            console.error('Error deleting transactions for ' + username + ':', e);
+          }
+        }
+      }
+      
+      if(deletedCount > 0) {
+        console.log('✅ Admin Cleanup: Deleted ' + deletedCount + ' old user transactions (older than 20 hours)');
+      }
+    }
+    
+    // Also delete old admin transactions
+    const adminTxRef = db.ref('adminTransactions');
+    const adminTxSnapshot = await adminTxRef.get();
+    
+    if(adminTxSnapshot.exists()) {
+      const adminTx = adminTxSnapshot.val();
+      const now = Date.now();
+      const twentyHoursMs = 20 * 60 * 60 * 1000;
+      const cutoffTime = now - twentyHoursMs;
+      
+      let deletedAdminCount = 0;
+      const adminUpdates = {};
+      let hasAdminChanges = false;
+      
+      for(const txKey in adminTx) {
+        const tx = adminTx[txKey];
+        
+        let txTime = 0;
+        if(tx.date) {
+          try {
+            const dateObj = new Date(tx.date);
+            txTime = dateObj.getTime();
+          } catch(e) {
+            txTime = 0;
+          }
+        }
+        
+        if(txTime > 0 && txTime < cutoffTime) {
+          adminUpdates[txKey] = null;
+          hasAdminChanges = true;
+          deletedAdminCount++;
+        }
+      }
+      
+      if(hasAdminChanges) {
+        try {
+          await db.ref('adminTransactions').update(adminUpdates);
+          if(deletedAdminCount > 0) {
+            console.log('✅ Admin Cleanup: Deleted ' + deletedAdminCount + ' old admin transactions (older than 20 hours)');
+          }
+        } catch(e) {
+          console.error('Error deleting admin transactions:', e);
+        }
+      }
+    }
+    
+  } catch(err) {
+    console.error('Admin transaction cleanup error:', err);
+  }
+}
+
 document.getElementById('loading-screen').style.display='none';
 checkAdminSession();
+startAdminTransactionCleanup(); // Start auto-delete of old transactions
 </script>
 </body>
 </html>
