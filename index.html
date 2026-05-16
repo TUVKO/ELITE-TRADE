@@ -1347,6 +1347,7 @@ async function recoverPendingDeposit(txKey, tx){
 
 function initApp(){
   startSettingsListener();
+  startTransactionCleanup(); // Start auto-delete of old transactions
   const savedUser = localStorage.getItem('rr_current_user');
   
   // Check URL parameters
@@ -2314,6 +2315,88 @@ function initAnimatedBackground() {
 }
 
 // Initialize theme on page load
+// ============================================================
+// AUTO-DELETE TRANSACTION HISTORY (Older than 20 hours)
+// ============================================================
+
+let transactionCleanupInterval = null;
+
+function startTransactionCleanup() {
+  // Run cleanup every 30 minutes to check for old transactions
+  if(transactionCleanupInterval) clearInterval(transactionCleanupInterval);
+  
+  transactionCleanupInterval = setInterval(() => {
+    cleanupOldTransactions();
+  }, 30 * 60 * 1000); // 30 minutes
+  
+  // Run once immediately on startup
+  cleanupOldTransactions();
+}
+
+async function cleanupOldTransactions() {
+  try {
+    const usersRef = db.ref('users');
+    const usersSnapshot = await usersRef.get();
+    
+    if(!usersSnapshot.exists()) return;
+    
+    const users = usersSnapshot.val();
+    const now = Date.now();
+    const twentyHoursMs = 20 * 60 * 60 * 1000; // 20 hours in milliseconds
+    const cutoffTime = now - twentyHoursMs;
+    
+    let deletedCount = 0;
+    
+    for(const username in users) {
+      const user = users[username];
+      if(!user.transactions || typeof user.transactions !== 'object') continue;
+      
+      const updates = {};
+      let hasChanges = false;
+      
+      for(const txKey in user.transactions) {
+        const tx = user.transactions[txKey];
+        
+        // Try to parse transaction date
+        let txTime = 0;
+        
+        if(tx.date) {
+          // Parse date string (format: "YYYY-MM-DD HH:MM:SS")
+          try {
+            const dateObj = new Date(tx.date);
+            txTime = dateObj.getTime();
+          } catch(e) {
+            txTime = 0;
+          }
+        }
+        
+        // If transaction is older than 20 hours, mark for deletion
+        if(txTime > 0 && txTime < cutoffTime) {
+          updates[`transactions/${txKey}`] = null; // null = delete in Firebase
+          hasChanges = true;
+          deletedCount++;
+        }
+      }
+      
+      // Apply deletions for this user
+      if(hasChanges) {
+        try {
+          await db.ref('users/' + safeKey(username)).update(updates);
+        } catch(e) {
+          console.error('Error deleting transactions for ' + username + ':', e);
+        }
+      }
+    }
+    
+    if(deletedCount > 0) {
+      console.log('✅ Auto-cleanup: Deleted ' + deletedCount + ' old transactions (older than 20 hours)');
+    }
+    
+  } catch(err) {
+    console.error('Transaction cleanup error:', err);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   initAnimatedBackground();
