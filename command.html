@@ -734,19 +734,33 @@ function clearSOGSearch(){ sogTargetUser=null; document.getElementById('sog-user
 
 function obliterateUserData(){ 
   if(!sogTargetUser){ toast('No user selected','#f87171'); return; } 
-  confirmAction('🗑️ OBLITERATE ALL FINANCIAL DATA?', 'Delete ALL financial data for ' + sogTargetUser.username + '? Account will become brand new. THIS CANNOT BE UNDONE.').then(confirmed=>{ 
+  confirmAction('🗑️ OBLITERATE ALL FINANCIAL DATA?', 'Delete ALL financial data for ' + sogTargetUser.username + '? Account will become brand new but referral links stay intact. THIS CANNOT BE UNDONE.').then(confirmed=>{ 
     if(confirmed){ 
       const updates = {}; 
-      updates['users/'+safeKey(sogTargetUser.username)+'/balance'] = 0;
-      updates['users/'+safeKey(sogTargetUser.username)+'/invested'] = 0;
-      updates['users/'+safeKey(sogTargetUser.username)+'/stake'] = 0;
-      updates['users/'+safeKey(sogTargetUser.username)+'/dayCount'] = 0;
-      updates['users/'+safeKey(sogTargetUser.username)+'/lastProfitDate'] = null;
-      updates['users/'+safeKey(sogTargetUser.username)+'/activated'] = false;
-      updates['users/'+safeKey(sogTargetUser.username)+'/transactions'] = {};
-      updates['users/'+safeKey(sogTargetUser.username)+'/deposits'] = {};
+      const username = sogTargetUser.username;
+      const safeUsername = safeKey(username);
+      
+      // Clear all financial data
+      updates['users/'+safeUsername+'/balance'] = 0;
+      updates['users/'+safeUsername+'/investment'] = 0;
+      updates['users/'+safeUsername+'/invested'] = 0;
+      updates['users/'+safeUsername+'/stake'] = 0;
+      updates['users/'+safeUsername+'/totalIncome'] = 0;
+      updates['users/'+safeUsername+'/totalWithdrawn'] = 0;
+      updates['users/'+safeUsername+'/dayCount'] = 0;
+      updates['users/'+safeUsername+'/lastProfitDate'] = null;
+      updates['users/'+safeUsername+'/lastInstantProfitDate'] = null;
+      updates['users/'+safeUsername+'/depositDate'] = null;
+      updates['users/'+safeUsername+'/activated'] = false;
+      updates['users/'+safeUsername+'/transactions'] = {};
+      updates['users/'+safeUsername+'/deposits'] = {};
+      updates['users/'+safeUsername+'/adminTransactions'] = {};
+      
+      // PRESERVE referral structure - do NOT touch referredBy or referrals
+      // This keeps them in the referral tree
+      
       db.ref().update(updates); 
-      toast('🗑️ All financial data obliterated for ' + sogTargetUser.username, '#f87171'); 
+      toast('🗑️ All financial data obliterated for ' + username + ' ✅ Referral links preserved', '#f87171'); 
       clearSOGSearch(); 
     } 
   }); 
